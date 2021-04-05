@@ -95,15 +95,17 @@ client.on('message', message => {
 							],
 							topic: `${message.author.id} ${args[0]}`
 						}).then(function (result) {
-                            message.channel.setParent('673360035098918932');
+                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let stch = message.guild.channels.cache.get(result.id);
+                            stch.setParent(category);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							client.on('message', m => {
 								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
                                 if (m.content == '.accept' && m.channel.id == result.id) {
-                                    message.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+                                    m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
-                                    message.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
+                                    m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == '.close' && m.channel.id == result.id) {
 									applying = applying.filter(e => e != desc[0]);
@@ -167,15 +169,17 @@ client.on('message', message => {
                                 ],
                                 topic: `${message.author.id} ${args[0]}`
                             }).then(function (result) {
-                                message.channel.setParent('673360035098918932');
+                                let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                                let stch = message.guild.channels.cache.get(result.id);
+                                stch.setParent(category);
                                 message.channel.send(`Channel <#${result.id}> has been created for you.`);
-								client.on('message', m => {
-									var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
+                                client.on('message', m => {
+                                    var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
                                     if (m.content == '.accept' && m.channel.id == result.id) {
-                                        message.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+                                        m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                     }
                                     else if (m.content == '.deny' && m.channel.id == result.id) {
-                                        message.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
+                                        m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                     }
                                     else if (m.content == '.close' && m.channel.id == result.id) {
                                         applying = applying.filter(e => e != desc[0]);
@@ -237,15 +241,17 @@ client.on('message', message => {
 							],
 							topic: `${message.author.id} ${args[0]}`
 						}).then(function (result) {
-                            message.channel.setParent('673360035098918932');
+                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let stch = message.guild.channels.cache.get(result.id);
+                            stch.setParent(category);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							client.on('message', m => {
 								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
                                 if (m.content == '.accept' && m.channel.id == result.id) {
-                                    message.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+                                    m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
-                                    message.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
+                                    m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == '.close' && m.channel.id == result.id) {
 									applying = applying.filter(e => e != desc[0]);
@@ -306,15 +312,17 @@ client.on('message', message => {
 							],
 							topic: `${message.author.id} ${args[0]}`
 						}).then(function (result) {
-                            message.channel.setParent('673360035098918932');
+                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let stch = message.guild.channels.cache.get(result.id);
+                            stch.setParent(category);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							client.on('message', m => {
 								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
                                 if (m.content == '.accept' && m.channel.id == result.id) {
-                                    message.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+                                    m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
-                                    message.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
+                                    m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == '.close' && m.channel.id == result.id) {
 									applying = applying.filter(e => e != desc[0]);
