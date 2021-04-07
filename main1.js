@@ -28,7 +28,7 @@ client.on('ready', () => {
 })
 
 client.on('guildMemberAdd', member => {
-    client.channels.cache.get().send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\`; if you're just visiting, have fun!`);
+    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\`; if you're just visiting, have fun!`);
 })
 
 client.on('message', message => {
@@ -79,28 +79,48 @@ client.on('message', message => {
 					else if (guild != 'null' && (args[1] == '-f' || args[1] == '--force')) {
 						message.guild.channels.create(`application-${args[0]}`, {
 							type: 'text',
-							permissionOverwrites: [
-								{
-									id: message.guild.id,
-									deny: ['VIEW_CHANNEL'],
-								},
+                            permissionOverwrites: [
                                 {
-									id: "683489556875444248",
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-								{
-									id: message.author.id,
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-							],
+                                    id: message.guild.id,
+                                    deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                                },
+                            ],
 							topic: `${message.author.id} ${args[0]}`
 						}).then(function (result) {
                             let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
                             let stch = message.guild.channels.cache.get(result.id);
                             stch.setParent(category);
+							stch.overwritePermissions([
+                                {
+                                    id: message.guild.id,
+                                    deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+							]);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
+							fs.writeFileSync(`./${args[0]}.txt`, "");
 							client.on('message', m => {
-								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
+								if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
+									return;
+								}
+								else {
+								var desc = client.channels.cache.get(result.id).topic.split(" ");
+								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
@@ -115,8 +135,7 @@ client.on('message', message => {
 										files: [`./${args[0]}.txt`]
 									});
 								}
-								fs.unlinkSync(`./application-${args[0]}.txt`);
-								if (m.channel.id == result.id) {
+								else if (m.channel.id == result.id || !m.content == '.close') {
 									messageContentFormatted = m.content.replace(/\n/g, '\n    ')
 									try {
 										fs.appendFileSync(`./${args[0]}.txt`, `\n\n\n[ ${m.author.username} ]\n\n${messageContentFormatted}`);
@@ -137,7 +156,6 @@ client.on('message', message => {
 									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined;
 									let ign = data.data[0].username;
-
 									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nGender:\nCountry & Timezone:\nAge:\nWhat do you like doing in Wynn?\nWhat do you enjoy IRL?\nTell us something interesting about yourself:\nHow active are you on Wynncraft?\nPrevious guilds you’ve been in and why you’ve left them:\nHow did you find out about ESI?\nAnything else you'd like to add?`);
 									addApplying(lowercaseName);
 								}
@@ -153,43 +171,63 @@ client.on('message', message => {
 
                             message.guild.channels.create(`application-${args[0]}`, {
                                 type: 'text',
-                                permissionOverwrites: [
-                                    {
-                                        id: message.guild.id,
-                                        deny: ['VIEW_CHANNEL'],
-                                    },
-                                    {
-                                        id: "683489556875444248",
-                                        allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-                                    },
-                                    {
-                                        id: message.author.id,
-                                        allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-                                    },
-                                ],
-                                topic: `${message.author.id} ${args[0]}`
+								permissionOverwrites: [
+									{
+										id: message.guild.id,
+										deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+									},
+									{
+										id: "683489556875444248",
+										allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+									},
+									{
+										id: message.author.id,
+										allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+									},
+								],
+                                topic: `${message.author.id} ${args[0]}`,
                             }).then(function (result) {
                                 let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
                                 let stch = message.guild.channels.cache.get(result.id);
                                 stch.setParent(category);
+								stch.overwritePermissions([
+									{
+										id: message.guild.id,
+										deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+									},
+									{
+										id: "683489556875444248",
+										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+									},
+									{
+										id: message.author.id,
+										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+									},
+								]);
                                 message.channel.send(`Channel <#${result.id}> has been created for you.`);
+								fs.writeFileSync(`./${args[0]}.txt`, "");
                                 client.on('message', m => {
-                                    var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
+									if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
+										return;
+									}
+									else {
+									var desc = client.channels.cache.get(result.id).topic.split(" ");
+									}
                                     if (m.content == '.accept' && m.channel.id == result.id) {
                                         m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                     }
                                     else if (m.content == '.deny' && m.channel.id == result.id) {
                                         m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                     }
-                                    else if (m.content == '.close' && m.channel.id == result.id) {
-                                        applying = applying.filter(e => e != desc[0]);
-                                        applying = applying.filter(e => e != desc[1]);
-                                        m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
-                                        m.guild.channels.cache.get('670622024967782422').send({
-                                            files: [`./${args[0]}.txt`]
-                                        });
-                                    }
-									if (m.channel.id == result.id) {
+									else if (m.content == '.close' && m.channel.id == result.id) {
+										applying = applying.filter(e => e != desc[0]);
+										applying = applying.filter(e => e != desc[1]);
+										m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
+										m.guild.channels.cache.get('670622024967782422').send({
+											files: [`./${args[0]}.txt`]
+										});
+									}
+									else if (m.channel.id == result.id || !m.content == '.close') {
 										messageContentFormatted = m.content.replace(/\n/g, '\n    ')
 										try {
 											fs.appendFileSync(`./${args[0]}.txt`, `\n\n\n[ ${m.author.username} ]\n\n${messageContentFormatted}`);
@@ -209,7 +247,6 @@ client.on('message', message => {
 										let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
 										let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
 										let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
-
 										message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nWhat was your IGN when you left the guild (if it has changed please list your current IGN):\nWhy did you leave the guild?\nWhy do you want to return to ESI?\nHave you been in any other guilds since?`);
 									}
 								});
@@ -224,45 +261,65 @@ client.on('message', message => {
 
 					else if (guild != 'null' && (args[1] == '-e' || args[1] == '--envoy')) {
 						message.guild.channels.create(`application-${args[0]}`, {
-							type: 'text',
-							permissionOverwrites: [
-								{
-									id: message.guild.id,
-									deny: ['VIEW_CHANNEL'],
-								},
+                            type: 'text',
+                            permissionOverwrites: [
                                 {
-									id: "683489556875444248",
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-								{
-									id: message.author.id,
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-							],
-							topic: `${message.author.id} ${args[0]}`
-						}).then(function (result) {
+                                    id: message.guild.id,
+                                    deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                            ],
+							topic: `${message.author.id} ${args[0]}`,
+                        }).then(function (result) {
                             let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
                             let stch = message.guild.channels.cache.get(result.id);
                             stch.setParent(category);
+							stch.overwritePermissions([
+                                {
+                                    id: message.guild.id,
+                                    deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+							]);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
-							client.on('message', m => {
-								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
-                                if (m.content == '.accept' && m.channel.id == result.id) {
+							fs.writeFileSync(`./${args[0]}.txt`, "");
+							client.on("message", m => {
+								if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
+									return;
+								}
+								else {
+								var desc = client.channels.cache.get(result.id).topic.split(" ");
+								}
+                                if (m.content == ".accept" && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
-                                else if (m.content == '.deny' && m.channel.id == result.id) {
+                                else if (m.content == ".deny" && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
-								else if (m.content == '.close' && m.channel.id == result.id) {
+								else if (m.content == ".close" && m.channel.id == result.id) {
 									applying = applying.filter(e => e != desc[0]);
 									applying = applying.filter(e => e != desc[1]);
 									m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
-									m.guild.channels.cache.get('670622024967782422').send({
+									m.guild.channels.cache.get("670622024967782422").send({
 										files: [`./${args[0]}.txt`]
 									});
 								}
-								if (m.channel.id == result.id) {
-									messageContentFormatted = m.content.replace(/\n/g, '\n    ')
+								else if (m.channel.id == result.id || !m.content == '.close') {
+									messageContentFormatted = m.content.replace(/\n/g, "\n    ")
 									try {
 										fs.appendFileSync(`./${args[0]}.txt`, `\n\n\n[ ${m.author.username} ]\n\n${messageContentFormatted}`);
 									}
@@ -278,46 +335,64 @@ client.on('message', message => {
 									if (!data.data[0].username) {
 										return;
 									}
-									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
+									let username = JSON.stringify(data.data[0].username).replace("\"", "").replace("\"", "");
 									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
 									let gu = data.data[0].guild.name;
-									let gurank = data.data[0].guild.rank;
-
 									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\nGuild: ${gu}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nWhat is your preferred nickname?\nWhat are your preferred pronouns?\nWhat guild is your current main guild?\nWhat do you like doing in your spare time?\nWhy do you want to apply for Envoy?`);
 								}
 							});
 							addApplying(lowercaseName);
 						});
-					}
+						}
 
 					if (guild == 'null') {
 						// no guild
 						addApplying(lowercaseName);
 						message.guild.channels.create(`application-${args[0]}`, {
 							type: 'text',
-							permissionOverwrites: [
-								{
-									id: message.guild.id,
-									deny: ['VIEW_CHANNEL'],
-								},
+                            permissionOverwrites: [
                                 {
-									id: "683489556875444248",
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-								{
-									id: message.author.id,
-									allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-								},
-							],
-							topic: `${message.author.id} ${args[0]}`
+                                    id: message.guild.id,
+                                    deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                                },
+                            ],
+							topic: `${message.author.id} ${args[0]}`,
 						}).then(function (result) {
                             let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
                             let stch = message.guild.channels.cache.get(result.id);
                             stch.setParent(category);
+							stch.overwritePermissions([
+                                {
+                                    id: message.guild.id,
+                                    deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+                                },
+                                {
+                                    id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                                {
+                                    id: message.author.id,
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+							]);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
+							fs.writeFileSync(`./${args[0]}.txt`, "");
 							client.on('message', m => {
-								var desc = message.guild.channels.cache.get(result.id).topic.split(" ");
+								if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
+									return;
+								}
+								else {
+								var desc = client.channels.cache.get(result.id).topic.split(" ");
+								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
                                 }
@@ -332,7 +407,7 @@ client.on('message', message => {
 										files: [`./${args[0]}.txt`]
 									});
 								}
-								if (m.channel.id == result.id) {
+								else if (m.channel.id == result.id || !m.content == '.close') {
 									messageContentFormatted = m.content.replace(/\n/g, '\n    ')
 									try {
 										fs.appendFileSync(`./${args[0]}.txt`, `\n\n\n[ ${m.author.username} ]\n\n${messageContentFormatted}`);
@@ -352,7 +427,6 @@ client.on('message', message => {
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
 									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
-
 									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your \nighest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides \nlaying Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
 								}
 							});
