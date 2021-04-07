@@ -260,6 +260,7 @@ client.on('message', message => {
 					}
 
 					else if (guild != 'null' && (args[1] == '-e' || args[1] == '--envoy')) {
+						if (!message.member.roles.cache.has('554896955638153216')) {
 						message.guild.channels.create(`application-${args[0]}`, {
                             type: 'text',
                             permissionOverwrites: [
@@ -344,6 +345,8 @@ client.on('message', message => {
 							});
 							addApplying(lowercaseName);
 						});
+					}
+					else message.channel.send('You\'re already in the guild as envoy.');
 						}
 
 					if (guild == 'null') {
