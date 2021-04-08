@@ -103,8 +103,12 @@ client.on('message', message => {
                                     id: message.guild.id,
                                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
                                 },
-                                {
+								{
                                     id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+                                {
+                                    id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
@@ -200,6 +204,10 @@ client.on('message', message => {
 										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
 									},
 									{
+										id: "246865469963763713",
+										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+									},
+									{
 										id: message.author.id,
 										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
 									},
@@ -272,6 +280,10 @@ client.on('message', message => {
                                     id: "683489556875444248",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
+								{
+                                    id: "246865469963763713",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
                                 {
                                     id: message.author.id,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
@@ -289,6 +301,10 @@ client.on('message', message => {
                                 },
                                 {
                                     id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+								{
+                                    id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
@@ -346,7 +362,7 @@ client.on('message', message => {
 							addApplying(lowercaseName);
 						});
 					}
-					else message.channel.send('You\'re already in the guild as envoy.');
+					else return;
 						}
 
 					if (guild == 'null') {
@@ -380,6 +396,10 @@ client.on('message', message => {
                                 },
                                 {
                                     id: "683489556875444248",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+								{
+                                    id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
