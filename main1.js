@@ -68,8 +68,9 @@ client.on('message', message => {
 					if (!data.data[0].username) {
 						return;
 					}
+					var username = data.data[0].username;
 					var guild = JSON.stringify(data.data[0].guild.name).replace('"', '').replace('"', '');
-
+					
 					if (guild != 'null' && !args[1]) {
 						// already in guild
 						message.channel.send(`You're currently in another guild! In order to apply, please do .apply [IGN] -f in order to apply as an in-game member, or do .apply [IGN] -e to apply as a Duocitizen.`);
@@ -439,6 +440,7 @@ client.on('message', message => {
 									if (role) m.guild.members.cache.get(message.author.id).roles.add(role);
 									let role2 = m.member.guild.roles.cache.find(role => role.name === "Sindrian Citizen");
 									if (role2) m.guild.members.cache.get(message.author.id).roles.add(role2);
+									m.member.setNickname(`Squire ${username}`);
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
