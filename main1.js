@@ -69,7 +69,6 @@ client.on('message', message => {
 						return;
 					}
 					var guild = JSON.stringify(data.data[0].guild.name).replace('"', '').replace('"', '');
-					var gurank = JSON.stringify(data.data[0].guild.rank).replace('"', '').replace('"', '');
 
 					if (guild != 'null' && !args[1]) {
 						// already in guild
@@ -156,8 +155,14 @@ client.on('message', message => {
 									if (!data.data[0].username) {
 										return;
 									}
+									var prevClass = 0;
+									for (const c in data.data[0].classes) {
+										if (data.data[0].classes[c].level > prevClass) {
+											prevClass = data.data[0].classes[c].level;
+										}
+									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
-									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
+									let classL = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined;
 									let ign = data.data[0].username;
 									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nGender:\nCountry & Timezone:\nAge:\nWhat do you like doing in Wynn?\nWhat do you enjoy IRL?\nTell us something interesting about yourself:\nHow active are you on Wynncraft?\nPrevious guilds you’ve been in and why you’ve left them:\nHow did you find out about ESI?\nAnything else you'd like to add?`);
@@ -252,8 +257,14 @@ client.on('message', message => {
 										if (!data.data[0].username) {
 											return;
 										}
+										var prevClass = 0;
+										for (const c in data.data[0].classes) {
+											if (data.data[0].classes[c].level > prevClass) {
+												prevClass = data.data[0].classes[c].level;
+											}
+										}
 										let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
-										let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
+										let classL = prevClass.toFixed(0);
 										let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
 										message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nWhat was your IGN when you left the guild (if it has changed please list your current IGN):\nWhy did you leave the guild?\nWhy do you want to return to ESI?\nHave you been in any other guilds since?`);
 									}
@@ -352,8 +363,14 @@ client.on('message', message => {
 									if (!data.data[0].username) {
 										return;
 									}
-									let username = JSON.stringify(data.data[0].username).replace("\"", "").replace("\"", "");
-									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
+									var prevClass = 0;
+									for (const c in data.data[0].classes) {
+										if (data.data[0].classes[c].level > prevClass) {
+											prevClass = data.data[0].classes[c].level;
+										}
+									}
+									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
+									let classL = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
 									let gu = data.data[0].guild.name;
 									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\nGuild: ${gu}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nWhat is your preferred nickname?\nWhat are your preferred pronouns?\nWhat guild is your current main guild?\nWhat do you like doing in your spare time?\nWhy do you want to apply for Envoy?`);
@@ -418,6 +435,10 @@ client.on('message', message => {
 								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+									let role = m.member.guild.roles.cache.find(role => role.name === "Squire");
+									if (role) m.guild.members.cache.get(message.author.id).roles.add(role);
+									let role2 = m.member.guild.roles.cache.find(role => role.name === "Sindrian Citizen");
+									if (role2) m.guild.members.cache.get(message.author.id).roles.add(role2);
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
@@ -447,10 +468,16 @@ client.on('message', message => {
 									if (!data.data[0].username) {
 										return;
 									}
+									var prevClass = 0;
+									for (const c in data.data[0].classes) {
+										if (data.data[0].classes[c].level > prevClass) {
+											prevClass = data.data[0].classes[c].level;
+										}
+									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
-									let classL = data.data[0].classes[0].professions.combat.level.toFixed(0);
+									let classL = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
-									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your \nighest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides \nlaying Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
+									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
 								}
 							});
 						});
