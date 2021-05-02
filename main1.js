@@ -28,7 +28,7 @@ client.on('ready', () => {
 })
 
 client.on('guildMemberAdd', member => {
-    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\`; if you're just visiting, have fun!`);
+    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
 })
 
 client.on('message', message => {
@@ -118,6 +118,7 @@ client.on('message', message => {
 							]);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							fs.writeFileSync(`./${args[0]}.txt`, "");
+							var accepted = false;
 							client.on('message', m => {
 								if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
 									return;
@@ -127,6 +128,7 @@ client.on('message', message => {
 								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+									accepted = true;
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
@@ -135,9 +137,11 @@ client.on('message', message => {
 									applying = applying.filter(e => e != desc[0]);
 									applying = applying.filter(e => e != desc[1]);
 									m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
+									if (accepted = true) {
 									m.guild.channels.cache.get('670622024967782422').send({
 										files: [`./${args[0]}.txt`]
 									});
+									}
 								}
 								else if (m.channel.id == result.id || !m.content == '.close') {
 									messageContentFormatted = m.content.replace(/\n/g, '\n    ')
@@ -220,6 +224,7 @@ client.on('message', message => {
 								]);
                                 message.channel.send(`Channel <#${result.id}> has been created for you.`);
 								fs.writeFileSync(`./${args[0]}.txt`, "");
+								var accepted = false;
                                 client.on('message', m => {
 									if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
 										return;
@@ -229,6 +234,7 @@ client.on('message', message => {
 									}
                                     if (m.content == '.accept' && m.channel.id == result.id) {
                                         m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+										accepted = true;
                                     }
                                     else if (m.content == '.deny' && m.channel.id == result.id) {
                                         m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
@@ -237,9 +243,11 @@ client.on('message', message => {
 										applying = applying.filter(e => e != desc[0]);
 										applying = applying.filter(e => e != desc[1]);
 										m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
+										if (accepted == true) {
 										m.guild.channels.cache.get('670622024967782422').send({
 											files: [`./${args[0]}.txt`]
 										});
+										}
 									}
 									else if (m.channel.id == result.id || !m.content == '.close') {
 										messageContentFormatted = m.content.replace(/\n/g, '\n    ')
@@ -324,6 +332,7 @@ client.on('message', message => {
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
 							]);
+							var accepted = false;
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							fs.writeFileSync(`./${args[0]}.txt`, "");
 							client.on("message", m => {
@@ -335,6 +344,7 @@ client.on('message', message => {
 								}
                                 if (m.content == ".accept" && m.channel.id == result.id) {
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+									accepted = true;
                                 }
                                 else if (m.content == ".deny" && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
@@ -343,9 +353,11 @@ client.on('message', message => {
 									applying = applying.filter(e => e != desc[0]);
 									applying = applying.filter(e => e != desc[1]);
 									m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
+									if (accepted == true) {
 									m.guild.channels.cache.get("670622024967782422").send({
 										files: [`./${args[0]}.txt`]
 									});
+									}
 								}
 								else if (m.channel.id == result.id || !m.content == '.close') {
 									messageContentFormatted = m.content.replace(/\n/g, "\n    ")
@@ -427,6 +439,7 @@ client.on('message', message => {
 							]);
 							message.channel.send(`Channel <#${result.id}> has been created for you.`);
 							fs.writeFileSync(`./${args[0]}.txt`, "");
+							var accepted = false;
 							client.on('message', m => {
 								if (typeof(client.channels.cache.get(result.id)) == 'undefined') {
 									return;
@@ -441,6 +454,7 @@ client.on('message', message => {
 									let role2 = m.member.guild.roles.cache.find(role => role.name === "Sindrian Citizen");
 									if (role2) m.guild.members.cache.get(message.author.id).roles.add(role2);
 									m.member.setNickname(`Squire ${username}`);
+									accepted = true;
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
@@ -449,9 +463,11 @@ client.on('message', message => {
 									applying = applying.filter(e => e != desc[0]);
 									applying = applying.filter(e => e != desc[1]);
 									m.guild.channels.cache.find(e => e.name == `${m.channel.name}`).delete();
+									if (accepted == true) {
 									m.guild.channels.cache.get('670622024967782422').send({
 										files: [`./${args[0]}.txt`]
 									});
+									}
 								}
 								else if (m.channel.id == result.id || !m.content == '.close') {
 									messageContentFormatted = m.content.replace(/\n/g, '\n    ')
@@ -477,9 +493,9 @@ client.on('message', message => {
 										}
 									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
-									let classL = prevClass.toFixed(0);
+									let levelClassHighest = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
-									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
+									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${levelClassHighest}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
 								}
 							});
 						});
