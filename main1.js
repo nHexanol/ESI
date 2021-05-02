@@ -509,7 +509,7 @@ client.on('message', message => {
 		}
 	}
 
-	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091)) {
+	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.member.roles.cache.has('600185623474601995'))) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
 		for (var i = 0; i < args.length; i++) {
