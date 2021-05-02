@@ -162,8 +162,8 @@ client.on('message', message => {
 									}
 									var prevClass = 0;
 									for (const c in data.data[0].classes) {
-										if (data.data[0].classes[c].level > prevClass) {
-											prevClass = data.data[0].classes[c].level;
+										if (data.data[0].classes[c].professions.combat.level > prevClass) {
+                                            prevClass = data.data[0].classes[c].professions.combat.level;
 										}
 									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
@@ -378,8 +378,8 @@ client.on('message', message => {
 									}
 									var prevClass = 0;
 									for (const c in data.data[0].classes) {
-										if (data.data[0].classes[c].level > prevClass) {
-											prevClass = data.data[0].classes[c].level;
+										if (data.data[0].classes[c].professions.combat.level > prevClass) {
+                                            prevClass = data.data[0].classes[c].professions.combat.level;
 										}
 									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
@@ -488,8 +488,8 @@ client.on('message', message => {
 									}
 									var prevClass = 0;
 									for (const c in data.data[0].classes) {
-										if (data.data[0].classes[c].level > prevClass) {
-											prevClass = data.data[0].classes[c].level;
+										if (data.data[0].classes[c].professions.combat.level > prevClass) {
+                                            prevClass = data.data[0].classes[c].professions.combat.level;
 										}
 									}
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
