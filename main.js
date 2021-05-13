@@ -255,7 +255,7 @@ client.on('message', message => {
 										if (accepted == true) {
 										m.guild.channels.cache.get('670622024967782422').send({
 											files: [`./${args[0]}.txt`]
-										});
+									client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY');	});
 										}
 									}
 									else if (m.channel.id == result.id || !m.content == '.close') {
@@ -643,3 +643,4 @@ client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
 
+client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY');
