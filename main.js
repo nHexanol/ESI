@@ -1,26 +1,75 @@
 const Discord = require('discord.js');
+const client = new Discord.Client()
 const fs = require('fs');
 const os = require('os');
 const diffler = require('diffler');
+const { Client } = require("discord-slash-commands-client");
+const dsc = new Client(
+	"ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY",
+	"820009377075167293"
+);
 const request = require('request');
 const util = require('util');
 const splArr = require('split-array');
 const d = new Date()
 const najax = require('najax');
 const $ = require('jquery');
+const Canvas = require('canvas');
+const http = require('http');
+const disbut = require('discord.js-buttons')(client);
+var prefix = ".";
 
-//init variable
-const client = new Discord.Client();
+//init variablec
+
 var terrClaimPingEnabled = false;
 var fetchObjInterval = 604800000;
 var claimInterval = 300000;
-var prefix = '.';
-
-var applying = [];
+var thresholdTerr = 3;
 var memberObj = [];
+var alreadyPinged = false;
+var Role = '<@246865469963763713>'
+
+// volatile variable
+
+//web server
+const server = http.createServer(function(req, res) {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    fs.readFile('./index.html', function(error, data) {
+        if (error) {
+            res.writeHead(404);
+            res.write('Error: File not found.');
+        }
+        else {
+            res.write(data);
+        }
+        res.end();
+    })
+})
+
 
 //manually add claims list here
-var ESIClaims = [];
+var ESIClaims = [
+	'Swamp Mountain Transition Lower',
+	'Swamp Mountain Transition Mid',
+	'Swamp Mountain Transition Mid-Upper',
+	'Swamp Mountain Transition Upper',
+	'Olux',
+	'Swamp Dark Forest Transition Upper',
+	'Taproot Descent',
+	'Swamp East Upper',
+	'Swamp West Upper',
+	'Swamp Plains Basin',
+	'Entrance to Olux',
+	'Swamp Dark Forest Transition Mid',
+	'Fortress North',
+	'Gelibord Castle',
+	'Gelibord Corrupted Farm',
+	'Swamp East Mid-Upper',
+	'Swamp West Mid-Upper',
+	'Swamp Mountain Base',
+	'Swamp Lower',
+	'Swamp Dark Forest Transition Lower'
+  ];
 
 function addApplying(name) {
 	applying.push(name);
@@ -31,7 +80,28 @@ client.on('ready', () => {
 })
 
 client.on('guildMemberAdd', member => {
-    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
+
+	//const canvas = Canvas.createCanvas(1213, 276);
+	//const context = canvas.getContext('2d');
+	//const background = await Canvas.loadImage('./welcome-base.png');
+	//context.drawImage(background, 0, 0, canvas.width, canvas.height);
+	//const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `welcome-${member.username}.png`);
+	//context.strokeStyle = '#ffffff';
+	//context.strokeRect(0, 0, canvas.width, canvas.height);
+	//const avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'jpg' }));
+	//context.drawImage(avatar, 25, 25, 200, 200);
+	//context.beginPath();
+	//context.arc(125, 125, 100, 0, Math.PI * 2, true);
+	//context.closePath();
+	//context.clip();
+	//context.font = '40px Ubuntu';
+	//context.fillStyle = '#ffffff';
+	//context.fillText(`Welcome to the Empire of Sindria Discord server,`, canvas.width / 2.5, canvas.height / 1.8);
+	//context.fillText(member.displayName, canvas.width / 2.5, canvas.height / 3.5);
+	//client.channels.cache.get('784352935198064660').send(attachment);
+
+    // old one 
+	client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
 })
 
 client.on('message', message => {
@@ -57,6 +127,9 @@ client.on('message', message => {
 		else {
 
 			if (args[0] == "-h" || args[0] == "--help" || typeof (args[0]) == 'undefined' || !args[0]) {
+				if (message.mentions.length > 0) {
+					var mentioned = message.mentions.first;
+				}
 				const applyhelp = new Discord.MessageEmbed()
 					.setTitle('Application')
 					.setColor('#11ff44')
@@ -118,6 +191,10 @@ client.on('message', message => {
                                 },
                                 {
                                     id: "246865469963763713",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+								{
+                                    id: message.mentions.first,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
@@ -227,6 +304,10 @@ client.on('message', message => {
 										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
 									},
 									{
+										id: message.mentions.first,
+										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+									},
+									{
 										id: message.author.id,
 										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
 									},
@@ -255,7 +336,7 @@ client.on('message', message => {
 										if (accepted == true) {
 										m.guild.channels.cache.get('670622024967782422').send({
 											files: [`./${args[0]}.txt`]
-									client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY');	});
+										});
 										}
 									}
 									else if (m.channel.id == result.id || !m.content == '.close') {
@@ -334,6 +415,10 @@ client.on('message', message => {
                                 },
 								{
                                     id: "246865469963763713",
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
+								{
+                                    id: message.mentions.first,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
@@ -441,6 +526,10 @@ client.on('message', message => {
                                     id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
+								{
+                                    id: message.mentions.first,
+                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+                                },
                                 {
                                     id: message.author.id,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
@@ -518,36 +607,65 @@ client.on('message', message => {
 		}
 	}
 
-    else if (cmd == 'terr' || cmd == 't' && !args) {
-        const terrManagerHelp = new Discord.MessageEmbed()
-            .setTitle('Territory manager')
-            .setDescription('Territory manager manage ESI claim for claim ping\n Command list :')
-            .addFields(
-                { name: 'Add territory to watch list', value: '.terr add [name]' },
-                { name: 'Remove territory from watch list', value: '.terr rem [name]' },
-                { name: 'List all the claims', value: '.terr list' },
-                { name: 'Toggle claim alert', value: '.terr alert'},
-                { name: 'Change API fetch interval', value: '.terr time [minute]'},
-              )
-    }
+	else if (cmd == "sp") {
+		message.channel.send('Not implemented yet :c');
+	}
 
 	else if (cmd == "g") {
-		var nameInput = "";
-		for (var n in args) {
-			nameInput.concat(args[i]);
-		}
-
-		request(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${args[0]}`, (err, resp, body) => {
-				if (err) throw (err);
+		var filtered = message.content.replace('.g ', '');
+		var username = "";
+		var rank = "";
+		var server = "";
+		request(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${filtered}`, (err, resp, body) => {
+				if (err) message.channel.send(err);
 				var data = JSON.parse(body);
-				if (data.data[0]) {
-					message.channel.send('Not implemented yet.')
+				for (const m in data.members) {
+					request(`https://api.wynncraft.com/v2/player/${data.members[m].name}/stats`, (err, resp, body) => {
+					if (err) message.channel.send(err);
+					var player = JSON.parse(body);
+					if (!player.guild || !player.username) return;
+					else if (player.meta.location.online == true && player.meta.location.server != 'null') {
+						username = username.concat(`${player.username}\n`);
+
+						var starRank = "";
+
+						if (player.guild.rank == "OWNER") starRank = "*****";
+						else if (player.guild.rank == "CHIEF") starRank = "****";
+						else if (player.guild.rank == "STRATEGIST") starRank = "***";
+						else if (player.guild.rank == "CAPTAIN") starRank = "**";
+						else if (player.guild.rank == "RECRUITER") starRank = "*";
+						else if (player.guild.rank == "RECRUIT") starRank = "";
+						else starRank == "UNKWN";
+
+						rank = rank.concat(`${starRank}\n`);
+						server = server.concat(`${player.meta.location.server}\n`);
+
+					}
+					});
 				}
+				const gustat = new Discord.MessageEmbed()
+				.setTitle(`${filtered} (${data.prefix})`)
+				.setColor('#f0ff00')
+				.addFields(
+					{ name: 'Name', value: `a${username}`, inline: true },
+					{ name: 'Rank', value: `s${rank}`, inline: true },
+					{ name: 'Server', value: `d${server}`, inline: true },
+				)
+				message.channel.send(gustat);
 			});
 	}
 
 	//wizard
-	else if (cmd == 'claimping') {
+	else if (cmd == 'terr') {
+
+		if (!args[0] || args[0] == 'help') {
+			message.channel.send({
+				files: ['./terrmanagerhelpunfinished.png']
+			});
+		}
+
+		if (args[0] == 'alert') {
+			if (!args[1]) {
 		const filter = (reaction, user) => {
 			return ['✅', '❎'].includes(reaction.emoji.name) && user.id === message.author.id;
 		};
@@ -584,8 +702,96 @@ client.on('message', message => {
 			})
 		});
 		}
+		else if (args[1] == 'on') {
+			terrClaimPingEnabled = true;
+		}
+		else if (args[1] == 'off') {
+			terrClaimPingEnabled = false;
+		}
+	}
 
-	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086)) {
+		else if (args[0] == 'setThresholdTerr' || args[0] == 'stt') {
+			if (!args[1] || typeof(parseInt(args[1]) != 'number')) return message.channel.send('Please specify lost territory threshold in number');
+			thresholdTerr = parseInt(args[0]);
+		}
+
+		else if (args[0] == 'setThresholdCaptain' || args[0] == 'stc') {
+			if (!args[1] || typeof(parseInt(args[1]) != 'number')) return message.channel.send('Please specify captain threshold in number');
+			thresholdTerr = parseInt(args[0]);
+		}
+
+		else if (args[0] == 'add') {
+			if (!args[1]) return;
+			for (var i = 1; i < args.length; i++) {
+				var terrname = "";
+				terrname = terrname.concat(`${args[i]} `);
+				terrname = terrname.trim();
+			}
+			ESIClaims.push(terrname);
+			request(`https://api.wynncraft.com/public_api.php?action=territoryList`, (err, resp, body) => {
+				if (err) throw (err);
+				var data = JSON.parse(body);
+				if (!data.territories[`${terrname}`]) {
+				const terraddfail = new Discord.MessageEmbed()
+					.setTitle('Territory manager - Territory added fail')
+					.setColor('#ff3333')
+					.setDescription(`Territory \`${terrname}\` doesn't existed !`)
+				return message.channel.send(terraddfail);
+				}
+				else ESIClaims.push(terrname);
+				const terradd = new Discord.MessageEmbed()
+					.setTitle('Territory manager - Territory added')
+					.setColor('#33ff33')
+					.setDescription(`Added ${terrname}`)
+				message.channel.send(terradd);
+			});
+		}
+
+		else if (args[0] == 'remove' || args[0] == 'rm' || args[0] == 'filter') {
+			if (!args[1]) return;
+			for (var i = 1; i < args.length; i++) {
+				var terrname = "";
+				terrname = terrname.concat(`${args[i]} `);
+			}
+			terrname = terrname.trim();
+			ESIClaims = ESIClaims.filter(tn => tn == !terrname);
+			const terrfiltered = new Discord.MessageEmbed()
+			.setTitle('Territory manager')
+			.setColor('#33ff33')
+			.setDescription(`Filtered ${terrname}`)
+		message.channel.send(terrfiltered);
+		}
+
+		else if (args[0] == 'list' || args[0] == 'ls') {
+			ClaimList = "";
+			for (const i in ESIClaims) {
+				ClaimList = ClaimList.concat(`- ${ESIClaims[i]}\n`);
+			}
+			if (typeof(ClaimList) == 'undefined') ClaimList = "<none>";
+			const ClaimLsEmbed = new Discord.MessageEmbed()
+				.setTitle('Territory manager')
+				.setColor('#44ff55')
+				.setDescription(ClaimList)
+			
+			message.channel.send(ClaimLsEmbed);
+		}
+	}
+
+	else if (cmd == "webserver") {
+		if (args[0] == 'start') {
+			let port = args[0];
+			server.start(port)
+		}
+		if (args[0] == 'stop') {
+
+		}
+	}
+
+else if (cmd == "function") {
+	return eval(`${args[0]}(message);`);
+}
+
+	else if (cmd == 'lev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
 		for (var i = 0; i < args.length; i++) {
@@ -614,11 +820,119 @@ client.on('message', message => {
 	}			
 });
 
+function button(message) {
+	let button = new disbut.MessageButton()
+	.setStyle('blurple')
+	.setLabel('Meow !')
+	.setID('meow')
+
+	let destruction = new disbut.MessageButton()
+	.setStyle('red')
+	.setLabel('DESTRUCTIONNN')
+	.setID('des')
+
+	let green = new disbut.MessageButton()
+	.setStyle('green')
+	.setLabel('*bite*')
+	.setID('nom')
+
+	message.channel.send(":eyes:", {
+		buttons : [ button, destruction, green ]
+	});
+
+	client.on('clickButton', async (button) => {
+		if (button.id === 'meow') {
+			button.channel.send({
+				files: ['./tenor.gif'],
+			});
+		}
+		else if (button.id === "des") {
+			button.channel.send("EAT ZINNIG \nAAAAAAAAAAAAAAAAAAAA ***nom***");
+		}
+		else if (button.id === "nom") {
+			button.channel.send({
+				files: ['./cat2.gif'],
+			});
+		}
+	  });
+}
+
+function test(message) {
+	return message.reply('pong uwu');
+}
+
+function awaitInteractionRole(message) {
+	let grindParties = new disbut.MessageButton()
+	.setStyle('blurple')
+	.setID("GP")
+	.setLabel('Grind Parties')
+
+	let RP = new disbut.MessageButton()
+	.setStyle('blurple')
+	.setID("RP")
+	.setLabel("Roleplay")
+
+	let PD = new disbut.MessageButton()
+	.setStyle('blurple')
+	.setID('PD')
+	.setLabel('Politics and Debate')
+
+	let buttonEmbed = new Discord.MessageEmbed()
+	.setTitle('Roles')
+	.setColor('#00e1a3')
+	.setDescription('Are you interested in roleplay? Or are you into politics, philosophy or debate?\nClick below to get your roles!')
+
+	message.channel.send('', {
+		buttons : [ RP, PD ],
+		embed: buttonEmbed
+	});
+
+	client.on('clickButton', async (button) => {
+		//if (button.id == "GP") {
+		//	if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
+		//		button.clicker.member.roles.remove('800547586694971443');
+		//		client.users.cache.get(button.clicker.user.id).send('Removed Grind Parties role.');
+		//		button.defer();
+		//	}
+		//	else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
+		//		button.clicker.member.roles.add('800547586694971443');
+		//		client.users.cache.get(button.clicker.user.id).send('Added Grind Parties role.');
+		//		button.defer();
+		//	}
+		//}
+		if (button.id == "RP") {
+			if (button.clicker.member.roles.cache.has('591763786474455130') == true) {
+				button.clicker.member.roles.remove('591763786474455130');
+				client.users.cache.get(button.clicker.user.id).send('Removed Roleplay role.');
+				button.defer();
+			}
+			else if (button.clicker.member.roles.cache.has('591763786474455130') == false) {
+				button.clicker.member.roles.add('591763786474455130');
+				client.users.cache.get(button.clicker.user.id).send('Added Roleplay role.');
+				button.defer();
+			}
+		}
+		else if (button.id == "PD") {
+			if (button.clicker.member.roles.cache.has('728104157852205056') == true) {
+				button.clicker.member.roles.remove('728104157852205056');
+				client.users.cache.get(button.clicker.user.id).send('Removed Politics and Debate role.');
+				button.defer();
+			}
+			else if (button.clicker.member.roles.cache.has('728104157852205056') == false) {
+				button.clicker.member.roles.add('728104157852205056');
+				client.users.cache.get(button.clicker.user.id).send('Added Politics and Debate role.');
+				button.defer();
+			}
+		}
+	});
+}
+
 // claim ping
-function claims() {
-	if (ESIClaims.length > 1 || terrClaimPingEnabled == true) {
+function fetchTerr() {
+	if (ESIClaims.length < 1 || terrClaimPingEnabled == false) {
 		return;
 	}
+	else {
 	var lostTerrCount = 0;
 	var lostTerrList = ""
 	request(`https://api.wynncraft.com/public_api.php?action=territoryList`, (err, resp, body) => {
@@ -627,20 +941,53 @@ function claims() {
 		if (data.territories) {
 			for (var i in ESIClaims) {
 				if (ESIClaims[i].guild != 'Empire of Sindria') {
-					lostTerrList.concat(`**${ESIClaims[i]}**\n[ ${ESIClaims[i].guild} ] [ ${ESIClaims[i].acquired} ]\n\n`);
-					lostTerrCount++;
+					lostTerrList = lostTerrList.concat(`**${ESIClaims[i]}**\n[ ${ESIClaims[i].guild} ] [ ${ESIClaims[i].acquired} ]\n\n`);
+					lostTerrCount + 1;
 				}
 			}
+			if (lostTerrCount >= thresholdTerr && alreadyPinged == false) {
+				ping(lostTerrList, lostTerrCount);
+				addPingCounter();
+			}
+			else return;
 		}
 	});
+	}
 }
 
-//async-ly run the function by the interval
-setInterval(claims, claimInterval);
+// set alreadyPinged to true so the code wont ping again until resetPingCouter() is called every 24 hours
+function addPingCounter() {
+	alreadyPinged = true;
+}
+
+// reset already pinged counter every 24 hours
+function resetPingCounter() {
+	alreadyPinged = false;
+}
+
+// ping the role
+function ping(terrData, count) {
+	if (terrClaimPingEnabled == false) return;
+	else {
+	const Ping = new Discord.MessageEmbed()
+		.setTitle('Territory manager - Detected missing claims (Temporary)')
+		.setColor('#ff7777')
+		.setDescription(terrData)
+		.setFooter(`Total lost claims : ${count}`)
+	message.channel.send(Ping);
+	client.channels.cache.get('606713555911311370').send(Ping);
+	}
+}
+
+// timers
+setInterval(fetchTerr, 300000);
+setInterval(resetPingCounter, 86400000);
 
 //event listener 'message' 
 client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
+
+// DSC client [ NOT discord.js client ]
 
 client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY');
