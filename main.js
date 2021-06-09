@@ -861,6 +861,72 @@ function test(message) {
 	return message.reply('pong uwu');
 }
 
+function awaitInteractionGuildRole(message) {
+	let gp = new disbut.MessageButton()
+	.setStyle('green')
+	.setID("GuP")
+	.setLabel('Guild Parties')
+
+	let ch = new disbut.MessageButton()
+	.setStyle('green')
+	.setID("CH")
+	.setLabel("Challenges")
+
+	let vt = new disbut.MessageButton()
+	.setStyle('green')
+	.setID('VT')
+	.setLabel('Venting')
+
+	let buttonEmbed = new Discord.MessageEmbed()
+	.setTitle('Guild Roles')
+	.setColor('#00e1a3')
+	.setDescription('Interested in small, fun events varying in length that happen on a weekly or bi-weekly basis (Like speedrunning The Eye, Harvesting Uth Runes, etc)? <@&800547442772148234> is the role for you!\n\nInterested in being pinged whenever we hold Prof Parties, Dungeon Parties, or Guild XP Grind Parties? Sign up for <@&800547586694971443>!\n\nNeed a place to vent, or want to seek advice from others? Press the button to join <@&786035931647180810>! Be sure to read the pin when you join.')
+
+	message.channel.send('', {
+		buttons : [ gp, ch, vt ],
+		embed: buttonEmbed
+	});
+
+	client.on('clickButton', async (button) => {
+		if (button.id == "GuP") {
+			if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
+				button.clicker.member.roles.remove('800547586694971443');
+				client.users.cache.get(button.clicker.user.id).send('Removed Guild Parties role.');
+				button.defer();
+			}
+			else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
+				button.clicker.member.roles.add('800547586694971443');
+				client.users.cache.get(button.clicker.user.id).send('Added Guild Parties role.');
+				button.defer();
+			}
+		}
+		else if (button.id == "CH") {
+			if (button.clicker.member.roles.cache.has('800547442772148234') == true) {
+				button.clicker.member.roles.remove('800547442772148234');
+				client.users.cache.get(button.clicker.user.id).send('Removed Challenges role.');
+				button.defer();
+			}
+			else if (button.clicker.member.roles.cache.has('800547442772148234') == false) {
+				button.clicker.member.roles.add('800547442772148234');
+				client.users.cache.get(button.clicker.user.id).send('Added Challenges role.');
+				button.defer();
+			}
+		}
+		else if (button.id == "VT") {
+			if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
+				button.clicker.member.roles.remove('786035931647180810');
+				client.users.cache.get(button.clicker.user.id).send('Removed Venting role.');
+				button.defer();
+			}
+			else if (button.clicker.member.roles.cache.has('786035931647180810') == false) {
+				button.clicker.member.roles.add('786035931647180810');
+				client.users.cache.get(button.clicker.user.id).send('Added Venting role.');
+				button.defer();
+			}
+		}
+	});
+}
+
 function awaitInteractionRole(message) {
 	let grindParties = new disbut.MessageButton()
 	.setStyle('blurple')
@@ -888,18 +954,6 @@ function awaitInteractionRole(message) {
 	});
 
 	client.on('clickButton', async (button) => {
-		//if (button.id == "GP") {
-		//	if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
-		//		button.clicker.member.roles.remove('800547586694971443');
-		//		client.users.cache.get(button.clicker.user.id).send('Removed Grind Parties role.');
-		//		button.defer();
-		//	}
-		//	else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
-		//		button.clicker.member.roles.add('800547586694971443');
-		//		client.users.cache.get(button.clicker.user.id).send('Added Grind Parties role.');
-		//		button.defer();
-		//	}
-		//}
 		if (button.id == "RP") {
 			if (button.clicker.member.roles.cache.has('591763786474455130') == true) {
 				button.clicker.member.roles.remove('591763786474455130');
