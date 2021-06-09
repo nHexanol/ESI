@@ -104,6 +104,69 @@ client.on('guildMemberAdd', member => {
 	client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
 })
 
+client.on('clickButton', async (button) => {
+	if (button.id == "GuP") {
+		if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
+			button.clicker.member.roles.remove('800547586694971443');
+			client.users.cache.get(button.clicker.user.id).send('Removed Guild Parties role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
+			button.clicker.member.roles.add('800547586694971443');
+			client.users.cache.get(button.clicker.user.id).send('Added Guild Parties role.');
+			button.defer();
+		}
+	}
+	else if (button.id == "CH") {
+		if (button.clicker.member.roles.cache.has('800547442772148234') == true) {
+			button.clicker.member.roles.remove('800547442772148234');
+			client.users.cache.get(button.clicker.user.id).send('Removed Challenges role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('800547442772148234') == false) {
+			button.clicker.member.roles.add('800547442772148234');
+			client.users.cache.get(button.clicker.user.id).send('Added Challenges role.');
+			button.defer();
+		}
+	}
+	else if (button.id == "VT") {
+		if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
+			button.clicker.member.roles.remove('786035931647180810');
+			client.users.cache.get(button.clicker.user.id).send('Removed Venting role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('786035931647180810') == false) {
+			button.clicker.member.roles.add('786035931647180810');
+			client.users.cache.get(button.clicker.user.id).send('Added Venting role.');
+			button.defer();
+		}
+	}
+	else if (button.id == "RP") {
+		if (button.clicker.member.roles.cache.has('591763786474455130') == true) {
+			button.clicker.member.roles.remove('591763786474455130');
+			client.users.cache.get(button.clicker.user.id).send('Removed Roleplay role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('591763786474455130') == false) {
+			button.clicker.member.roles.add('591763786474455130');
+			client.users.cache.get(button.clicker.user.id).send('Added Roleplay role.');
+			button.defer();
+		}
+	}
+	else if (button.id == "PD") {
+		if (button.clicker.member.roles.cache.has('728104157852205056') == true) {
+			button.clicker.member.roles.remove('728104157852205056');
+			client.users.cache.get(button.clicker.user.id).send('Removed Politics and Debate role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('728104157852205056') == false) {
+			button.clicker.member.roles.add('728104157852205056');
+			client.users.cache.get(button.clicker.user.id).send('Added Politics and Debate role.');
+			button.defer();
+		}
+	}
+});
+
 client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 	var args = message.content.slice(prefix.length).trim().split(" ");
@@ -262,7 +325,7 @@ client.on('message', message => {
 							});
 						});
 					}
-
+					
 					else if (guild != 'null' && (args[1] == '-v' || args[1] == '--veteran')) {
 
 						if (message.member.roles.cache.has('706338091312349195')) {
@@ -791,7 +854,7 @@ else if (cmd == "function") {
 	return eval(`${args[0]}(message);`);
 }
 
-	else if (cmd == 'lev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
+	else if (cmd == 'lev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
 		for (var i = 0; i < args.length; i++) {
@@ -886,45 +949,6 @@ function awaitInteractionGuildRole(message) {
 		buttons : [ gp, ch, vt ],
 		embed: buttonEmbed
 	});
-
-	client.on('clickButton', async (button) => {
-		if (button.id == "GuP") {
-			if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
-				button.clicker.member.roles.remove('800547586694971443');
-				client.users.cache.get(button.clicker.user.id).send('Removed Guild Parties role.');
-				button.defer();
-			}
-			else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
-				button.clicker.member.roles.add('800547586694971443');
-				client.users.cache.get(button.clicker.user.id).send('Added Guild Parties role.');
-				button.defer();
-			}
-		}
-		else if (button.id == "CH") {
-			if (button.clicker.member.roles.cache.has('800547442772148234') == true) {
-				button.clicker.member.roles.remove('800547442772148234');
-				client.users.cache.get(button.clicker.user.id).send('Removed Challenges role.');
-				button.defer();
-			}
-			else if (button.clicker.member.roles.cache.has('800547442772148234') == false) {
-				button.clicker.member.roles.add('800547442772148234');
-				client.users.cache.get(button.clicker.user.id).send('Added Challenges role.');
-				button.defer();
-			}
-		}
-		else if (button.id == "VT") {
-			if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
-				button.clicker.member.roles.remove('786035931647180810');
-				client.users.cache.get(button.clicker.user.id).send('Removed Venting role.');
-				button.defer();
-			}
-			else if (button.clicker.member.roles.cache.has('786035931647180810') == false) {
-				button.clicker.member.roles.add('786035931647180810');
-				client.users.cache.get(button.clicker.user.id).send('Added Venting role.');
-				button.defer();
-			}
-		}
-	});
 }
 
 function awaitInteractionRole(message) {
@@ -951,33 +975,6 @@ function awaitInteractionRole(message) {
 	message.channel.send('', {
 		buttons : [ RP, PD ],
 		embed: buttonEmbed
-	});
-
-	client.on('clickButton', async (button) => {
-		if (button.id == "RP") {
-			if (button.clicker.member.roles.cache.has('591763786474455130') == true) {
-				button.clicker.member.roles.remove('591763786474455130');
-				client.users.cache.get(button.clicker.user.id).send('Removed Roleplay role.');
-				button.defer();
-			}
-			else if (button.clicker.member.roles.cache.has('591763786474455130') == false) {
-				button.clicker.member.roles.add('591763786474455130');
-				client.users.cache.get(button.clicker.user.id).send('Added Roleplay role.');
-				button.defer();
-			}
-		}
-		else if (button.id == "PD") {
-			if (button.clicker.member.roles.cache.has('728104157852205056') == true) {
-				button.clicker.member.roles.remove('728104157852205056');
-				client.users.cache.get(button.clicker.user.id).send('Removed Politics and Debate role.');
-				button.defer();
-			}
-			else if (button.clicker.member.roles.cache.has('728104157852205056') == false) {
-				button.clicker.member.roles.add('728104157852205056');
-				client.users.cache.get(button.clicker.user.id).send('Added Politics and Debate role.');
-				button.defer();
-			}
-		}
 	});
 }
 
