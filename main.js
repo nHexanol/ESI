@@ -26,6 +26,7 @@ var fetchObjInterval = 604800000;
 var claimInterval = 300000;
 var thresholdTerr = 3;
 var memberObj = [];
+var applying = [];
 var alreadyPinged = false;
 var Role = '<@246865469963763713>'
 
@@ -256,10 +257,6 @@ client.on('message', message => {
                                     id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
-								{
-                                    id: message.mentions.first,
-                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-                                },
                                 {
                                     id: message.author.id,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
@@ -364,10 +361,6 @@ client.on('message', message => {
 									},
 									{
 										id: "246865469963763713",
-										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-									},
-									{
-										id: message.mentions.first,
 										allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
 									},
 									{
@@ -480,10 +473,6 @@ client.on('message', message => {
                                     id: "246865469963763713",
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
-								{
-                                    id: message.mentions.first,
-                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-                                },
                                 {
                                     id: message.author.id,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
@@ -587,10 +576,6 @@ client.on('message', message => {
                                 },
 								{
                                     id: "246865469963763713",
-                                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-                                },
-								{
-                                    id: message.mentions.first,
                                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
                                 },
                                 {
