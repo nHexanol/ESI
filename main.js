@@ -3,11 +3,6 @@ const client = new Discord.Client()
 const fs = require('fs');
 const os = require('os');
 const diffler = require('diffler');
-const { Client } = require("discord-slash-commands-client");
-const dsc = new Client(
-	"ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY",
-	"820009377075167293"
-);
 const request = require('request');
 const util = require('util');
 const splArr = require('split-array');
@@ -69,8 +64,15 @@ var ESIClaims = [
 	'Swamp West Mid-Upper',
 	'Swamp Mountain Base',
 	'Swamp Lower',
-	'Swamp Dark Forest Transition Lower'
-  ];
+	'Swamp Dark Forest Transition Lower',
+	'Fortress South',
+	'Swamp West Mid',
+	'Swamp East Mid',
+	'Swamp West Lower',
+	'Swamp East Lower',
+	'Forgotten Path',
+	'Iron Road'
+  ]
 
 function addApplying(name) {
 	applying.push(name);
@@ -151,6 +153,18 @@ client.on('clickButton', async (button) => {
 		else if (button.clicker.member.roles.cache.has('591763786474455130') == false) {
 			button.clicker.member.roles.add('591763786474455130');
 			client.users.cache.get(button.clicker.user.id).send('Added Roleplay role.');
+			button.defer();
+		}
+	}
+	else if (button.id == "AN") {
+		if (button.clicker.member.roles.cache.has('854233448494530571') == true) {
+			button.clicker.member.roles.remove('854233448494530571');
+			client.users.cache.get(button.clicker.user.id).send('Removed Anime role.');
+			button.defer();
+		}
+		else if (button.clicker.member.roles.cache.has('854233448494530571') == false) {
+			button.clicker.member.roles.add('854233448494530571');
+			client.users.cache.get(button.clicker.user.id).send('Added Anime role.');
 			button.defer();
 		}
 	}
@@ -273,10 +287,17 @@ client.on('message', message => {
 								var desc = client.channels.cache.get(result.id).topic.split(" ");
 								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+									let role = m.member.guild.roles.cache.find(role => role.name === "Squire");
+									if (role) m.guild.members.cache.get(message.author.id).roles.add(role);
+									let role2 = m.member.guild.roles.cache.find(role => role.name === "Sindrian Citizen");
+									if (role2) m.guild.members.cache.get(message.author.id).roles.add(role2);
+									m.member.setNickname(`Squire ${username}`);
 									accepted = true;
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == '.close' && m.channel.id == result.id) {
@@ -379,11 +400,13 @@ client.on('message', message => {
 									var desc = client.channels.cache.get(result.id).topic.split(" ");
 									}
                                     if (m.content == '.accept' && m.channel.id == result.id) {
-                                        m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
+										m.channel.bulkDelete(1);
+										m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
 										accepted = true;
                                     }
                                     else if (m.content == '.deny' && m.channel.id == result.id) {
-                                        m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
+										m.channel.bulkDelete(1);
+										m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                     }
 									else if (m.content == '.close' && m.channel.id == result.id) {
 										applying = applying.filter(e => e != desc[0]);
@@ -489,10 +512,12 @@ client.on('message', message => {
 								var desc = client.channels.cache.get(result.id).topic.split(" ");
 								}
                                 if (m.content == ".accept" && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
 									accepted = true;
                                 }
                                 else if (m.content == ".deny" && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == ".close" && m.channel.id == result.id) {
@@ -594,6 +619,7 @@ client.on('message', message => {
 								var desc = client.channels.cache.get(result.id).topic.split(" ");
 								}
                                 if (m.content == '.accept' && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!");
 									let role = m.member.guild.roles.cache.find(role => role.name === "Squire");
 									if (role) m.guild.members.cache.get(message.author.id).roles.add(role);
@@ -603,6 +629,7 @@ client.on('message', message => {
 									accepted = true;
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
+									m.channel.bulkDelete(1);
                                     m.channel.send("We regret to inform you your application was denied. If you would like to reapply to the guild, you may do so after one week.");
                                 }
 								else if (m.content == '.close' && m.channel.id == result.id) {
@@ -944,8 +971,8 @@ function awaitInteractionRole(message) {
 
 	let RP = new disbut.MessageButton()
 	.setStyle('blurple')
-	.setID("RP")
-	.setLabel("Roleplay")
+	.setID("AN")
+	.setLabel("Anime")
 
 	let PD = new disbut.MessageButton()
 	.setStyle('blurple')
@@ -955,7 +982,7 @@ function awaitInteractionRole(message) {
 	let buttonEmbed = new Discord.MessageEmbed()
 	.setTitle('Roles')
 	.setColor('#00e1a3')
-	.setDescription('Are you interested in roleplay? Or are you into politics, philosophy or debate?\nClick below to get your roles!')
+	.setDescription('Are you interested in Anime? Or are you into politics, philosophy or debate?\nClick below to get your roles!')
 
 	message.channel.send('', {
 		buttons : [ RP, PD ],
