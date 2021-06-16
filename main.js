@@ -691,6 +691,19 @@ client.on('message', message => {
 		var username = "";
 		var rank = "";
 		var server = "";
+		
+		function pushDataUsr(INPUTusername) {
+			username = username.concat(`${INPUTusername}\n`);
+		}
+
+		function pushDataRank(INPUTrank) {
+			rank = rank.concat(`${INPUTrank}\n`);
+		}
+
+		function pushDataServer(INPUTserver) {
+			server = server.concat(`${INPUTserver}\n`);
+		}
+
 		request(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${filtered}`, (err, resp, body) => {
 				if (err) message.channel.send(err);
 				var data = JSON.parse(body);
@@ -700,7 +713,6 @@ client.on('message', message => {
 					var player = JSON.parse(body);
 					if (!player.guild || !player.username) return;
 					else if (player.meta.location.online == true && player.meta.location.server != 'null') {
-						username = username.concat(`${player.username}\n`);
 
 						var starRank = "";
 
@@ -712,9 +724,11 @@ client.on('message', message => {
 						else if (player.guild.rank == "RECRUIT") starRank = "";
 						else starRank == "UNKWN";
 
-						rank = rank.concat(`${starRank}\n`);
-						server = server.concat(`${player.meta.location.server}\n`);
-
+						console.log(`${username} ${starRank} ${server}`);
+						pushDataUsr(username);
+						pushDataRank(starRank);
+						pushDataServer(server);
+						
 					}
 					});
 				}
@@ -982,7 +996,7 @@ function awaitInteractionRole(message) {
 	let buttonEmbed = new Discord.MessageEmbed()
 	.setTitle('Roles')
 	.setColor('#00e1a3')
-	.setDescription('Are you interested in Anime? Or are you into politics, philosophy or debate?\nClick below to get your roles!')
+	.setDescription('Are you interested in anime? Or are you into politics, philosophy or debate?\nClick below to get your roles!')
 
 	message.channel.send('', {
 		buttons : [ RP, PD ],
@@ -1003,11 +1017,11 @@ function fetchTerr() {
 		var data = JSON.parse(body);
 		if (data.territories) {
 			for (var i in ESIClaims) {
-				if (ESIClaims[i].guild != 'Empire of Sindria') {
-					lostTerrList = lostTerrList.concat(`**${ESIClaims[i]}**\n[ ${ESIClaims[i].guild} ] [ ${ESIClaims[i].acquired} ]\n\n`);
-					lostTerrCount + 1;
-				}
+				if (data.territories[`${ESIClaims[i]}`].guild != "Empire of Sindria") {
+				lostTerrList = lostTerrList.concat(`**${ESIClaims[i]}**\n[ ${ESIClaims[i].guild} ] [ ${ESIClaims[i].acquired} ]\n\n`);
+				lostTerrCount++;
 			}
+		}
 			if (lostTerrCount >= thresholdTerr && alreadyPinged == false) {
 				ping(lostTerrList, lostTerrCount);
 				addPingCounter();
@@ -1038,7 +1052,7 @@ function ping(terrData, count) {
 		.setDescription(terrData)
 		.setFooter(`Total lost claims : ${count}`)
 	message.channel.send(Ping);
-	client.channels.cache.get('606713555911311370').send(Ping);
+	client.channels.cache.get('784352935198064660').send(Ping);
 	}
 }
 
