@@ -3,9 +3,23 @@ const fs = require('fs');
 const port = 80;
 
 const server = http.createServer(function(req, res) {
-    if (req.url == "/") {
+    
+    if (req.url == "/test.html") {
     res.writeHead(200, { 'Content-Type': 'text/html' });
     fs.readFile('./html/index.html', function(error, data) {
+        if (error) {
+            res.writeHead(404);
+            res.write('Error: File not found.');
+        }
+        else {
+            res.write(data);
+        }
+        res.end();
+    })
+}
+if (req.url == "/lxa.html") {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    fs.readFile('./html/lxa.html', function(error, data) {
         if (error) {
             res.writeHead(404);
             res.write('Error: File not found.');

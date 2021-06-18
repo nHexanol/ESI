@@ -9,15 +9,18 @@ const d = new Date()
 const najax = require('najax');
 const $ = require('jquery');
 
-//construc the new og discord client
+//init variable
 const client = new Discord.Client();
+var terrClaimPingEnabled = false;
+var fetchObjInterval = 604800000;
+var claimInterval = 300000;
 var prefix = '.';
 
 var applying = [];
 var memberObj = [];
 
-//default message to send when the api is unavalible.
-var inact = '';
+//manually add claims list here
+var ESIClaims = [];
 
 function addApplying(name) {
 	applying.push(name);
@@ -509,6 +512,53 @@ client.on('message', message => {
 		}
 	}
 
+	//wizard
+	else if (cmd == 'claimping') {
+		const filter = (reaction, user) => {
+			return ['✅', '❎'].includes(reaction.emoji.name) && user.id === message.author.id;
+		};
+		
+		var option = new Discord.MessageEmbed()
+		.setTitle('Territory manager')
+		.setColor('#66ffbb')
+		.setDescription('**Claim ping**\nNotify role when ESI lost claim\nUse `.terr` for more territory manager help')
+		.addFields(
+		  { name: 'To enable', value: 'React with ✅' },
+		  { name: 'To disable', value: 'React with ❎' },
+		)
+		.setFooter(`Current value : ${terrClaimPingEnabled} | Default : false`)
+		message.channel.send(option).then(sentEmbed => {
+		sentEmbed.react('\✅');
+		sentEmbed.react('\❎');
+		sentEmbed.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+			.then(collected => {
+				const reaction = collected.first();
+		
+				if (reaction.emoji.name === '✅') {
+					terrClaimPingEnabled = true;
+					//enabled embed
+					const enabled = new Discord.MessageEmbed()
+					.setTitle('Territory manager')
+					.setDescription('Claim ping enabled.')
+					.setColor('#99ff99')
+					message.edit(enabled);
+				} 
+				else if (reaction.emoji.name === '❎') {
+					terrClaimPingEnabled = false;
+					//disabled embed
+					const disabled = new Discord.MessageEmbed()
+					.setTitle('Territory manager')
+					.setDescription('Claim ping disabled.')
+					.setColor('#ff9999')
+					message.edit(disabled);
+				}
+				else {
+					message.channel.send("You did not reacted with neither option.")
+				}
+			})
+		});
+		}
+
 	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
@@ -538,10 +588,34 @@ client.on('message', message => {
 	}			
 });
 
-//event listener 'message' define "m" as message object when client receive message from the API
+// claim ping
+function claims() {
+	if (ESIClaims.length > 1 || terrClaimPingEnabled == true) {
+		return;
+	}
+	var lostTerrCount = 0;
+	var lostTerrList = ""
+	request(`https://api.wynncraft.com/public_api.php?action=territoryList`, (err, resp, body) => {
+		if (err) throw (err);
+		var data = JSON.parse(body);
+		if (data.territories) {
+			for (var i in ESIClaims) {
+				if (ESIClaims[i].guild != 'Empire of Sindria') {
+					lostTerrList.concat(`**${ESIClaims[i]}**\n[ ${ESIClaims[i].guild} ] [ ${ESIClaims[i].acquired} ]\n\n`);
+					lostTerrCount++;
+				}
+			}
+		}
+	});
+}
+
+//async-ly run the function by the interval
+setInterval(claims, claimInterval);
+
+//event listener 'message' 
 client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
 
 //token thingy
-client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.XfZxXMX-htzfqowY4aidE0JmJbg');
+client.login('ODIwMDA5Mzc3MDc1MTY3Mjkz.YEu7Pg.wp9MiGRT0IDzmzPojx5oxoym9wY');
