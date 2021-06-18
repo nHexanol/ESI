@@ -17,20 +17,14 @@ const server = http.createServer(function(req, res) {
         res.end();
     })
 }
-if (req.url == "/lxa.html") {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.readFile('./html/lxa.html', function(error, data) {
-        if (error) {
-            res.writeHead(404);
-            res.write('Error: File not found.');
-        }
-        else {
-            res.write(data);
-        }
-        res.end();
-    })
+else if (req.url == "/all.min.css") {
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+    fs.readFile('./all.min.css', function(error, data) {
+    res.write(data);
+    res.end();
+    });
 }
-})
+});
 
 server.listen(port, function(error) {
     if (error) console.log(error);
