@@ -7,15 +7,24 @@ const request = require('request');
 const util = require('util');
 const splArr = require('split-array');
 const d = new Date()
+const vega = require('vega');
+//const wynn = require('./wynncraft.js');
 const najax = require('najax');
 const $ = require('jquery');
 const Canvas = require('canvas');
 const http = require('http');
+const fetch = require('node-fetch');
 const disbut = require('discord.js-buttons')(client);
+const spawn = require("child_process").spawn;
+const python_guilds = spawn("python3.9", ["guilds.py"]);
+const python_playtime = spawn("python3.9", ["Playtime.py"]);
+const port = 8080;
 var prefix = ".";
-
-//init variablec
-
+var previousGuildMemberCount = 0;
+var previousGuildMemberData = {};
+var currentGuildMemberCount = 0;
+var currentGuildMemberData = {}
+var pythonProcessDebug = false;
 var terrClaimPingEnabled = false;
 var fetchObjInterval = 604800000;
 var claimInterval = 300000;
@@ -23,27 +32,10 @@ var thresholdTerr = 3;
 var memberObj = [];
 var applying = [];
 var alreadyPinged = false;
-var Role = '<@246865469963763713>'
-
-// volatile variable
-
-//web server
-const server = http.createServer(function(req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.readFile('./index.html', function(error, data) {
-        if (error) {
-            res.writeHead(404);
-            res.write('Error: File not found.');
-        }
-        else {
-            res.write(data);
-        }
-        res.end();
-    })
-})
-
-
-//manually add claims list here
+var Role = '<@246865469963763713>';
+const uint8arrayToString = function(data){
+    return String.fromCharCode.apply(null, data);
+};
 var ESIClaims = [
 	'Swamp Mountain Transition Lower',
 	'Swamp Mountain Transition Mid',
@@ -74,6 +66,47 @@ var ESIClaims = [
 	'Iron Road'
   ]
 
+/*
+
+*/
+
+
+/*
+
+*/
+
+python_guilds.stdout.on('data', (data) => {
+	var output = uint8arrayToString(data);
+	console.log(uint8arrayToString(data));
+	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
+ });
+
+python_playtime.stdout.on('data', (data) => {
+	var output = uint8arrayToString(data);
+	console.log(uint8arrayToString(data));
+	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
+ });
+
+python_guilds.stderr.on('data', (data) => {
+	var output = uint8arrayToString(data);
+    console.log(uint8arrayToString(data));
+	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
+});
+
+python_playtime.stderr.on('data', (data) => {
+	var output = uint8arrayToString(data);
+    console.log(uint8arrayToString(data));
+	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
+});
+
+python_guilds.on('exit', (code) => {
+    console.log("Process exited with code : " + code);
+});
+
+python_playtime.on('exit', (code) => {
+    console.log("Process exited with code : " + code);
+});
+
 function addApplying(name) {
 	applying.push(name);
 }
@@ -82,30 +115,21 @@ client.on('ready', () => {
 	console.log('Logged in');
 })
 
-client.on('guildMemberAdd', member => {
-
-	//const canvas = Canvas.createCanvas(1213, 276);
-	//const context = canvas.getContext('2d');
-	//const background = await Canvas.loadImage('./welcome-base.png');
-	//context.drawImage(background, 0, 0, canvas.width, canvas.height);
-	//const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `welcome-${member.username}.png`);
-	//context.strokeStyle = '#ffffff';
-	//context.strokeRect(0, 0, canvas.width, canvas.height);
-	//const avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'jpg' }));
-	//context.drawImage(avatar, 25, 25, 200, 200);
-	//context.beginPath();
-	//context.arc(125, 125, 100, 0, Math.PI * 2, true);
-	//context.closePath();
-	//context.clip();
-	//context.font = '40px Ubuntu';
-	//context.fillStyle = '#ffffff';
-	//context.fillText(`Welcome to the Empire of Sindria Discord server,`, canvas.width / 2.5, canvas.height / 1.8);
-	//context.fillText(member.displayName, canvas.width / 2.5, canvas.height / 3.5);
-	//client.channels.cache.get('784352935198064660').send(attachment);
-
-    // old one 
-	client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
-})
+client.on('clickButton', async (button) => {
+	if (button.id === 'meow') {
+		button.channel.send({
+			files: ['./tenor.gif'],
+		});
+	}
+	else if (button.id === "des") {
+		button.channel.send("EAT ZINNIG \nAAAAAAAAAAAAAAAAAAAA ***nom***");
+	}
+	else if (button.id === "nom") {
+		button.channel.send({
+			files: ['./cat2.gif'],
+		});
+	}
+  });
 
 client.on('clickButton', async (button) => {
 	if (button.id == "GuP") {
@@ -133,7 +157,11 @@ client.on('clickButton', async (button) => {
 		}
 	}
 	else if (button.id == "VT") {
-		if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
+		if (button.clicker.member.roles.cache.has('554896955638153216')) {
+			button.defer();
+			return client.users.cache.get(button.clicker.user.id).send('You are not eligible for this role.');
+		}
+		else if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
 			button.clicker.member.roles.remove('786035931647180810');
 			client.users.cache.get(button.clicker.user.id).send('Removed Venting role.');
 			button.defer();
@@ -187,6 +215,20 @@ client.on('message', message => {
 	var args = message.content.slice(prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
 
+	if (cmd == "zinnig") {
+		client.users.cache.find(u => u.username === "Zinnig").send('oho');
+	}
+
+	if (cmd == "find") {
+		fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
+		.then(res => res.json())
+		.then((json => {
+			if (!json.data[0].meta.location.online) var online = `${args[0]} is not currently online any Wynncraft server....`;
+			else if (json.data[0].meta.location.online) var online = `${args[0]} is currently on server ${json.data[0].meta.location.server}`;
+			message.channel.send(online);
+		}))
+	}
+	
 	if (cmd == 'help' || cmd == '?') {
 		message.channel.send({
 			files: ['./help.png']
@@ -337,7 +379,7 @@ client.on('message', message => {
 									let classL = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined;
 									let ign = data.data[0].username;
-									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nGender:\nCountry & Timezone:\nAge:\nWhat do you like doing in Wynn?\nWhat do you enjoy IRL?\nTell us something interesting about yourself:\nHow active are you on Wynncraft?\nPrevious guilds you’ve been in and why you’ve left them:\nHow did you find out about ESI?\nAnything else you'd like to add?`);
+									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nCountry & Timezone:\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
 									addApplying(lowercaseName);
 								}
 							});
@@ -625,7 +667,7 @@ client.on('message', message => {
 									if (role) m.guild.members.cache.get(message.author.id).roles.add(role);
 									let role2 = m.member.guild.roles.cache.find(role => role.name === "Sindrian Citizen");
 									if (role2) m.guild.members.cache.get(message.author.id).roles.add(role2);
-									m.member.setNickname(`Squire ${username}`);
+									message.member.setNickname(`Squire ${username}`);
 									accepted = true;
                                 }
                                 else if (m.content == '.deny' && m.channel.id == result.id) {
@@ -682,12 +724,127 @@ client.on('message', message => {
 		}
 	}
 
-	else if (cmd == "sp") {
-		message.channel.send('Not implemented yet :c');
+	else if (cmd == "g") {
+		async function sendData(gName, gPrefix, dUsername, dRank, dServer, online, maxMember, level) {
+			const guildEmbed = new Discord.MessageEmbed()
+			.setTitle(`${gName} (${gPrefix}) | ${level}`)
+			.setColor('#ddff00')
+			.addFields(
+				{ name: 'Name', value: `${dUsername}`, inline: true },
+				{ name: 'Rank', value: `${dRank}`, inline: true },
+				{ name: 'Server', value: `${dServer}`, inline: true },
+			)
+			.setFooter(`${online} / ${maxMember} online`)
+
+			message.channel.send(guildEmbed);
+		}
+		var sUsername = "";
+		var sRank = "";
+		var sServer = "";
+		var guName = "";
+		var guPrefix = "";
+		if (args.length == 0) var filtered = "Empire+of+Sindria";
+		else if (args.length != 0) var filtered = message.content.replace(`${prefix}${cmd} `, '').replace(/ /g, "+");
+		console.log(filtered);
+    	request(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${filtered}`, (error, res, body) => {
+			if (error) return message.channel.send(error);
+			var gu = JSON.parse(body);
+			guName = gu.name;
+			guPrefix = gu.prefix;
+			var counter = [];
+			var onlineList = 0;
+			var rankOrder = ["OWNER", "CHIEF", "STRATEGIST", "CAPTAIN", "RECRUITER", "RECRUIT"];
+			sortedMembers = gu.members.sort((a,b) => {return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)});
+			for (const m in sortedMembers) {
+				fetch(`https://api.wynncraft.com/v2/player/${sortedMembers[m].uuid}/stats`)
+				.then(res => res.json())
+				.then(function (json) {
+					console.log(m);
+					counter.push(m);
+					if (json.data[0].meta.location.online == false || json.data[0].meta.location.server == "null") return;
+					else if (json.data[0].meta.location.online && json.data[0].meta.location.server != "null") {
+					var fRank = "";
+					switch (json.data[0].guild.rank) {
+						case "RECRUIT":
+							fRank = "";
+							break;
+						case "RECRUITER":
+							fRank = "\\*"
+							break;
+						case "CAPTAIN":
+							fRank = "\\*\\*"
+							break;
+						case "STRATEGIST":
+							fRank = "\\*\\*\\*"
+							break;
+						case "CHIEF":
+							fRank = "\\*\\*\\*\\*";
+							break;
+						case "OWNER":
+							fRank = "\\*\\*\\*\\*\\*";
+							break;
+						default:
+							fRank = "UNKWN";
+					}
+					onlineList++;
+					sUsername = sUsername.concat(`${json.data[0].username}\n`);
+					sRank = sRank.concat(`${fRank}\n`);
+					sServer = sServer.concat(`${json.data[0].meta.location.server}\n`);
+					console.log(`Counter length : ${counter.length}\nOnline : ${onlineList}`);
+				}
+				}).then(function () {
+					if (counter.length == gu.members.length - 1) {
+						console.log(sUsername);
+						if (sUsername.length == 0) {
+							sUsername = "*<none>*"; 
+							sRank = "-"; 
+							sServer = "-";
+						}
+						sUsername = sUsername.replace(/_/g, "\\_");
+						sendData(gu.name, gu.prefix, sUsername, sRank, sServer, onlineList, gu.members.length, gu.level);
+						console.log(`${gu.name} (${gu.prefix})\n${sUsername} ${sRank} ${sServer}`);
+						console.log(`${m} ${gu.members.length}`);
+						}
+				})
+				.catch(console.log);
+			}
+		}
+		);
 	}
 
-	else if (cmd == "g") {
-		var filtered = message.content.replace('.g ', '');
+	else if (cmd == "debug" && message.author.id == "246865469963763713") {
+		if (pythonProcessDebug) { pythonProcessDebug = false; message.channel.send(pythonProcessDebug); }
+		else if (!pythonProcessDebug) { pythonProcessDebug = true; message.channel.send(pythonProcessDebug); }
+	}
+
+	else if (cmd == "ls") {
+		function sendData (players, count) {
+			const playerls = new Discord.MessageEmbed()
+			.setTitle('Player list')
+			.setColor('#009eff')
+			.setDescription(`\`\`\`\n${players}\n\`\`\``)
+			.setFooter(`${count} players online`)
+			message.channel.send(playerls);
+		}
+		if (args.length == 0) return message.channel.send(`Usage : \`${prefix}ls (world)\``);
+		var input = parseInt(args[0]);
+		var output = "";
+		var playerCounter = 0;
+		if (!typeof(input) == "number") return message.channel.send("Argument must contain number.");
+		fetch('https://api.wynncraft.com/public_api.php?action=onlinePlayers')
+		.then(res => res.json())
+		.then(function (json) {
+			inputFormatted = json[`WC${input}`];
+			for (const m in inputFormatted) {
+				inputFormatted = json[`WC${input}`];	output = output.concat(`${inputFormatted}\n`);
+				playerCounter++
+			}
+			sendData(output, playerCounter);
+		});
+	}
+
+	else if (cmd == "requestGuild") {
+		var filtered = message.content.replace('.g ', '').replace(/ /g, "+");
 		var username = "";
 		var rank = "";
 		var server = "";
@@ -744,7 +901,6 @@ client.on('message', message => {
 			});
 	}
 
-	//wizard
 	else if (cmd == 'terr') {
 
 		if (!args[0] || args[0] == 'help') {
@@ -866,21 +1022,27 @@ client.on('message', message => {
 		}
 	}
 
-	else if (cmd == "webserver") {
-		if (args[0] == 'start') {
-			let port = args[0];
-			server.start(port)
-		}
-		if (args[0] == 'stop') {
-
-		}
-	}
-
 else if (cmd == "function") {
+	try {
 	return eval(`${args[0]}(message);`);
+	}
+	catch (err) {
+		message.channel.send(`\`\`\`js\n${err}\n\`\`\``);
+	}
 }
 
-	else if (cmd == 'lev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086)) {
+else if (cmd == "sp") {
+	fetch('https://athena.wynntils.com/cache/get/serverList')
+	.then(res => res.json())
+	.then(json => {
+		var sortedWC = json.sort((d1, d2) => {
+			return d1.firstSeen - d2.firstSeen
+		});
+		var buffered = "";
+	})
+}
+
+	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
 		for (var i = 0; i < args.length; i++) {
@@ -909,6 +1071,28 @@ else if (cmd == "function") {
 	}			
 });
 
+function guildMemberUpdateListener() {
+	var currentGuildMemberData = {};
+	fetch('https://api.wynncraft.com/public_api.php?action=guildStats&command=Empire+of+Sindria')
+	.then(res => res.json())
+	.then(json => function (json) {
+		previousGuildMemberCount = indexOf(json.members);
+		if (indexOf(json.member) == previousGuildMemberCount) return;
+		else if (indexOf(json.member) > previousGuildMemberCount) {
+			currentGuildMemberData = json;
+			var added = diffler(currentGuildMemberData, previousGuildMemberCount);
+			var parsedAddedDiffler = added.members;
+			console.log(parsedAddedDiffler);
+		}
+		else if (indexOf(json.member) < previousGuildMemberCount) {
+			currentGuildMemberData = json;
+			var removed = diffler(currentGuildMemberData, previousGuildMemberCount);
+			var parsedRemovedDiffler = removed.members;
+			console.log(parsedRemovedDiffler);
+		}
+	})
+}
+
 function button(message) {
 	let button = new disbut.MessageButton()
 	.setStyle('blurple')
@@ -928,22 +1112,6 @@ function button(message) {
 	message.channel.send(":eyes:", {
 		buttons : [ button, destruction, green ]
 	});
-
-	client.on('clickButton', async (button) => {
-		if (button.id === 'meow') {
-			button.channel.send({
-				files: ['./tenor.gif'],
-			});
-		}
-		else if (button.id === "des") {
-			button.channel.send("EAT ZINNIG \nAAAAAAAAAAAAAAAAAAAA ***nom***");
-		}
-		else if (button.id === "nom") {
-			button.channel.send({
-				files: ['./cat2.gif'],
-			});
-		}
-	  });
 }
 
 function test(message) {
@@ -1004,7 +1172,6 @@ function awaitInteractionRole(message) {
 	});
 }
 
-// claim ping
 function fetchTerr() {
 	if (ESIClaims.length < 1 || terrClaimPingEnabled == false) {
 		return;
@@ -1032,17 +1199,14 @@ function fetchTerr() {
 	}
 }
 
-// set alreadyPinged to true so the code wont ping again until resetPingCouter() is called every 24 hours
 function addPingCounter() {
 	alreadyPinged = true;
 }
 
-// reset already pinged counter every 24 hours
 function resetPingCounter() {
 	alreadyPinged = false;
 }
 
-// ping the role
 function ping(terrData, count) {
 	if (terrClaimPingEnabled == false) return;
 	else {
@@ -1056,7 +1220,7 @@ function ping(terrData, count) {
 	}
 }
 
-// timers
+setInterval(guildMemberUpdateListener, 60000);
 setInterval(fetchTerr, 300000);
 setInterval(resetPingCounter, 86400000);
 
