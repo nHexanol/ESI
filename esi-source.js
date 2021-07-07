@@ -8,7 +8,7 @@ const util = require('util');
 const splArr = require('split-array');
 const d = new Date()
 const vega = require('vega');
-//const wynn = require('./wynncraft.js');
+const wynn = require('wynncraft.js');
 const najax = require('najax');
 const $ = require('jquery');
 const Canvas = require('canvas');
@@ -18,13 +18,7 @@ const disbut = require('discord.js-buttons')(client);
 const spawn = require("child_process").spawn;
 const python_guilds = spawn("python3.9", ["guilds.py"]);
 const python_playtime = spawn("python3.9", ["Playtime.py"]);
-const java = spawn('java', ['-jar', 'sub.jar']);
-const port = 8080;
-var prefix = ".";
-var previousGuildMemberCount = 0;
-var previousGuildMemberData = {};
-var currentGuildMemberCount = 0;
-var currentGuildMemberData = {}
+var prefix = "$";
 var pythonProcessDebug = false;
 var terrClaimPingEnabled = false;
 var fetchObjInterval = 604800000;
@@ -79,13 +73,6 @@ python_playtime.stdout.on('data', (data) => {
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
  });
 
-java.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
-
-});
-
 python_guilds.stderr.on('data', (data) => {
 	var output = uint8arrayToString(data);
     console.log(uint8arrayToString(data));
@@ -98,23 +85,12 @@ python_playtime.stderr.on('data', (data) => {
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
 });
 
-java.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
-
-});
-
 python_guilds.on('exit', (code) => {
     console.log("Process exited with code : " + code);
 });
 
 python_playtime.on('exit', (code) => {
     console.log("Process exited with code : " + code);
-});
-
-java.on('exit', (code) => {
-	console.log('Process exited with code : ' + code);
 });
 
 function addApplying(name) {
@@ -124,10 +100,6 @@ function addApplying(name) {
 client.on('ready', () => {
 	console.log('Logged in');
 })
-
-client.on('guildMemberAdd', member => {
-    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
-});
 
 client.on('clickButton', async (button) => {
 	if (button.id === 'meow') {
@@ -232,16 +204,6 @@ client.on('message', message => {
 	if (cmd == "zinnig") {
 		client.users.cache.find(u => u.username === "Zinnig").send('oho');
 	}
-
-	if (cmd == "find") {
-		fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
-		.then(res => res.json())
-		.then((json => {
-			if (!json.data[0].meta.location.online) var online = `${args[0]} is not currently online any Wynncraft server....`;
-			else if (json.data[0].meta.location.online) var online = `${args[0]} is currently on server ${json.data[0].meta.location.server}`;
-			message.channel.send(online);
-		}))
-	}
 	
 	if (cmd == 'help' || cmd == '?') {
 		message.channel.send({
@@ -289,7 +251,7 @@ client.on('message', message => {
 					
 					if (guild != 'null' && !args[1]) {
 						// already in guild
-						message.channel.send(`You're currently in another guild! In order to apply, please do .apply ${args[0]} -f in order to apply as an in-game member, or do .apply ${args[0]} -e to apply as a Duocitizen.`);
+						message.channel.send(`You're currently in another guild! In order to apply, please do .apply [IGN] -f in order to apply as an in-game member, or do .apply [IGN] -e to apply as a Duocitizen.`);
 					}
 
 					else if (guild != 'null' && (args[1] == '-f' || args[1] == '--force')) {
@@ -393,7 +355,7 @@ client.on('message', message => {
 									let classL = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined;
 									let ign = data.data[0].username;
-									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nCountry & Timezone:\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
+									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${classL}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nGender:\nCountry & Timezone:\nAge:\nWhat do you like doing in Wynn?\nWhat do you enjoy IRL?\nTell us something interesting about yourself:\nHow active are you on Wynncraft?\nPrevious guilds you’ve been in and why you’ve left them:\nHow did you find out about ESI?\nAnything else you'd like to add?`);
 									addApplying(lowercaseName);
 								}
 							});
@@ -805,6 +767,7 @@ client.on('message', message => {
 					sRank = sRank.concat(`${fRank}\n`);
 					sServer = sServer.concat(`${json.data[0].meta.location.server}\n`);
 					console.log(`Counter length : ${counter.length}\nOnline : ${onlineList}`);
+					// console.log(`${gu.name} (${gu.prefix})\n${sUsername} ${sRank} ${sServer}`);
 				}
 				}).then(function () {
 					if (counter.length == gu.members.length - 1) {
@@ -827,8 +790,8 @@ client.on('message', message => {
 	}
 
 	else if (cmd == "debug" && message.author.id == "246865469963763713") {
-		pythonProcessDebug = !pythonProcessDebug;
-		message.channel.send(pythonProcessDebug);
+		if (pythonProcessDebug) { pythonProcessDebug = false; message.channel.send(pythonProcessDebug); }
+		else if (!pythonProcessDebug) { pythonProcessDebug = true; message.channel.send(pythonProcessDebug); }
 	}
 
 	else if (cmd == "ls") {
@@ -1045,17 +1008,6 @@ else if (cmd == "function") {
 	}
 }
 
-else if (cmd == "sp") {
-	fetch('https://athena.wynntils.com/cache/get/serverList')
-	.then(res => res.json())
-	.then(json => {
-		var sortedWC = json.sort((d1, d2) => {
-			return d1.firstSeen - d2.firstSeen
-		});
-		var buffered = "";
-	})
-}
-
 	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
@@ -1084,28 +1036,6 @@ else if (cmd == "sp") {
 		}
 	}			
 });
-
-function guildMemberUpdateListener() {
-	var currentGuildMemberData = {};
-	fetch('https://api.wynncraft.com/public_api.php?action=guildStats&command=Empire+of+Sindria')
-	.then(res => res.json())
-	.then(json => function (json) {
-		previousGuildMemberCount = indexOf(json.members);
-		if (indexOf(json.member) == previousGuildMemberCount) return;
-		else if (indexOf(json.member) > previousGuildMemberCount) {
-			currentGuildMemberData = json;
-			var added = diffler(currentGuildMemberData, previousGuildMemberCount);
-			var parsedAddedDiffler = added.members;
-			console.log(parsedAddedDiffler);
-		}
-		else if (indexOf(json.member) < previousGuildMemberCount) {
-			currentGuildMemberData = json;
-			var removed = diffler(currentGuildMemberData, previousGuildMemberCount);
-			var parsedRemovedDiffler = removed.members;
-			console.log(parsedRemovedDiffler);
-		}
-	})
-}
 
 function button(message) {
 	let button = new disbut.MessageButton()
@@ -1186,7 +1116,7 @@ function awaitInteractionRole(message) {
 	});
 }
 
-function get_territory() {
+function fetchTerr() {
 	if (ESIClaims.length < 1 || terrClaimPingEnabled == false) {
 		return;
 	}
@@ -1234,8 +1164,7 @@ function ping(terrData, count) {
 	}
 }
 
-setInterval(guildMemberUpdateListener, 60000);
-setInterval(get_territory, 300000);
+setInterval(fetchTerr, 300000);
 setInterval(resetPingCounter, 86400000);
 
 //event listener 'message' 
@@ -1244,5 +1173,5 @@ client.on('message', m => {
 });
 
 // DSC client [ NOT discord.js client ]
-const token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'});
-client.login(token);
+
+client.login();
