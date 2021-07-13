@@ -767,6 +767,7 @@ client.on('message', message => {
 			guPrefix = gu.prefix;
 			var counter = [];
 			var onlineList = 0;
+            var final_sorttemplate = ["\\*\\*\\*\\*\\*", "\\*\\*\\*\\*", "\\*\\*\\*", "\\*\\*", "\\*", "", "UNKWN"];
 			var rankOrder = ["OWNER", "CHIEF", "STRATEGIST", "CAPTAIN", "RECRUITER", "RECRUIT"];
 			sortedMembers = gu.members.sort((a,b) => {return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)});
 			for (const m in sortedMembers) {
@@ -813,7 +814,7 @@ client.on('message', message => {
 				}
 				}).then(function () {
 					if (counter.length == gu.members.length - 1) {
-						sorted = storage.sort((a,b) => {return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)});
+						sorted = storage.sort((a, b) => {return final_sorttemplate.indexOf(a.rank) - final_sorttemplate.indexOf(b.rank)});
 						console.log(storage);
 						console.log(sorted);
 						if (sUsername.length == 0) {
