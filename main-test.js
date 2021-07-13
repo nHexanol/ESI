@@ -826,12 +826,12 @@ client.on('message', message => {
                         var sorted_rank = "";
                         var sorted_server = "";
                         for (var usr in storage) {
-                            sorted_username = sorted_username.concat(`${storage[usr]["name"]}`);
-                            sorted_rank = sorted_rank.concat(`${storage[usr]["rank"]}`);
-                            sorted_server = sorted_server.concat(`${storage[usr]["server"]}`);
+                            sorted_username = sorted_username.concat(`${storage[usr]["name"]}\n`);
+                            sorted_rank = sorted_rank.concat(`${storage[usr]["rank"]}\n`);
+                            sorted_server = sorted_server.concat(`${storage[usr]["server"]}\n`);
                         }
 						sUsername = sUsername.replace(/_/g, "\\_");
-                        sendData(gu.name, gu.prefix, sorted_username, sorted_rank, sorted_server, gu.members.length, gu.level);
+                        sendData(gu.name, gu.prefix, sorted_username, sorted_rank, sorted_server, onlineList, gu.members.length, gu.level);
 						sendData(gu.name, gu.prefix, sUsername, sRank, sServer, onlineList, gu.members.length, gu.level);
 						console.log(`${gu.name} (${gu.prefix})\n${sUsername} ${sRank} ${sServer}`);
 						console.log(`${m} ${gu.members.length}`);
