@@ -11,21 +11,27 @@ const vega = require('vega');
 //const wynn = require('./wynncraft.js');
 const najax = require('najax');
 const $ = require('jquery');
-const Canvas = require('canvas');
 const http = require('http');
 const fetch = require('node-fetch');
 const disbut = require('discord.js-buttons')(client);
 const spawn = require("child_process").spawn;
+const { createCanvas, loadImage } = require('canvas');
+const width = 1600;
+const height = 900
+const canvas = createCanvas(width, height);
+const ctx = canvas.getContext('2d');
 const python_guilds = spawn("python3.9", ["guilds.py"]);
 const python_playtime = spawn("python3.9", ["Playtime.py"]);
 const java = spawn('java', ['-jar', 'sub.jar']);
 const port = 8080;
-var prefix = ".";
+var cache = "";
+var prefix = "$";
+var eat_prefix = ">";
 var previousGuildMemberCount = 0;
 var previousGuildMemberData = {};
 var currentGuildMemberCount = 0;
 var currentGuildMemberData = {}
-var pythonProcessDebug = false;
+var pythonProcessDebug = true;
 var terrClaimPingEnabled = false;
 var fetchObjInterval = 604800000;
 var claimInterval = 300000;
@@ -83,7 +89,6 @@ java.stdout.on('data', (data) => {
 	var output = uint8arrayToString(data);
     console.log(uint8arrayToString(data));
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
-
 });
 
 python_guilds.stderr.on('data', (data) => {
@@ -102,7 +107,6 @@ java.stderr.on('data', (data) => {
 	var output = uint8arrayToString(data);
     console.log(uint8arrayToString(data));
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
-
 });
 
 python_guilds.on('exit', (code) => {
@@ -117,16 +121,18 @@ java.on('exit', (code) => {
 	console.log('Process exited with code : ' + code);
 });
 
+
 function addApplying(name) {
 	applying.push(name);
 }
 
 client.on('ready', () => {
 	console.log('Logged in');
+	data_caching();
 })
 
 client.on('guildMemberAdd', member => {
-    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
+//    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
 });
 
 client.on('clickButton', async (button) => {
@@ -225,6 +231,55 @@ client.on('clickButton', async (button) => {
 });
 
 client.on('message', message => {
+	if (!message.content.startsWith(eat_prefix) || message.author.bot) return;
+	var args = message.content.slice(eat_prefix.length).trim().split(" ");
+	var cmd = args.shift().toLowerCase();
+
+
+
+	if (cmd == "eat" || cmd == "vore") {
+		var rand = Math.ceil(Math.random() * 5);
+		switch (rand) {
+			case 1:
+				file = "https://media.discordapp.net/attachments/855444056493391885/864417395857424404/0.gif";
+				break;
+			case 2:
+				file = "https://media1.tenor.com/images/d3b0f6cfa4dbf8ec178efaaf130412c7/tenor.gif?itemid=18100206";
+				break;
+			case 3:
+				file = "https://cdn.discordapp.com/attachments/855444056493391885/864417402614448135/3.gif";
+				break;
+			case 4:
+				file = "https://cdn.discordapp.com/attachments/855444056493391885/864417405827547146/2.gif";
+				break;
+			case 5:
+				file = "https://cdn.discordapp.com/attachments/855444056493391885/864417407186763776/4.gif";
+				break;
+		}
+
+		if (message.member.nickname == null) {
+			var nickname = message.author.username
+		}
+		else if (message.member.nickname != null) {
+			var nickname = message.member.nickname;
+		}
+
+		if (message.mentions.members.first().nickname == null) {
+			var ate = message.mentions.members.first().user.username;
+		}
+		else if (message.mentions.members.first().nickname != null) {
+			var ate = message.mentions.members.first().nickname;
+		}
+
+		const eat_embed = new Discord.MessageEmbed()
+			.setTitle(`${nickname} ate ${ate}`)
+			.setImage(file)
+
+		message.channel.send(eat_embed);
+	}
+});
+
+client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 	var args = message.content.slice(prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
@@ -262,7 +317,7 @@ client.on('message', message => {
 
 			if (args[0] == "-h" || args[0] == "--help" || typeof (args[0]) == 'undefined' || !args[0]) {
 				if (message.mentions.length > 0) {
-					var mentioned = message.mentions.first;
+					var mentioned = message.mentions.first();
 				}
 				const applyhelp = new Discord.MessageEmbed()
 					.setTitle('Application')
@@ -281,7 +336,8 @@ client.on('message', message => {
 				if (err) throw (err);
 				var data = JSON.parse(body);
 				if (data.data[0]) {
-					if (!data.data[0].username) {
+					if (!data[0]) {
+						message.channel.send("Username not found.\nIf you changed your username recently, try using your old username or UUID.");
 						return;
 					}
 					var username = data.data[0].username;
@@ -752,6 +808,8 @@ client.on('message', message => {
 
 			message.channel.send(guildEmbed);
 		}
+		var arr_counter = 0;
+		var storage = [];
 		var sUsername = "";
 		var sRank = "";
 		var sServer = "";
@@ -767,6 +825,7 @@ client.on('message', message => {
 			guPrefix = gu.prefix;
 			var counter = [];
 			var onlineList = 0;
+            var final_sorttemplate = ["\\*\\*\\*\\*\\*", "\\*\\*\\*\\*", "\\*\\*\\*", "\\*\\*", "\\*", "", "UNKWN"];
 			var rankOrder = ["OWNER", "CHIEF", "STRATEGIST", "CAPTAIN", "RECRUITER", "RECRUIT"];
 			sortedMembers = gu.members.sort((a,b) => {return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)});
 			for (const m in sortedMembers) {
@@ -801,6 +860,11 @@ client.on('message', message => {
 							fRank = "UNKWN";
 					}
 					onlineList++;
+					storage[arr_counter] = {};
+					storage[arr_counter].name = json.data[0].username;
+					storage[arr_counter].rank = fRank;
+					storage[arr_counter].server = json.data[0].meta.location.server;
+					arr_counter++;
 					sUsername = sUsername.concat(`${json.data[0].username}\n`);
 					sRank = sRank.concat(`${fRank}\n`);
 					sServer = sServer.concat(`${json.data[0].meta.location.server}\n`);
@@ -808,13 +872,24 @@ client.on('message', message => {
 				}
 				}).then(function () {
 					if (counter.length == gu.members.length - 1) {
-						console.log(sUsername);
+						var sorted = storage.sort((a, b) => {return final_sorttemplate.indexOf(b.rank) - final_sorttemplate.indexOf(a.rank)});
+						console.log(storage);
+						console.log(sorted);
 						if (sUsername.length == 0) {
 							sUsername = "*<none>*"; 
 							sRank = "-"; 
 							sServer = "-";
 						}
+                        var sorted_username = "";
+                        var sorted_rank = "";
+                        var sorted_server = "";
+                        for (var usr in storage) {
+                            sorted_username = sorted_username.concat(`${storage[usr]["name"]}\n`);
+                            sorted_rank = sorted_rank.concat(`${storage[usr]["rank"]}\n`);
+                            sorted_server = sorted_server.concat(`${storage[usr]["server"]}\n`);
+                        }
 						sUsername = sUsername.replace(/_/g, "\\_");
+                        sendData(gu.name, gu.prefix, sorted_username, sorted_rank, sorted_server, onlineList, gu.members.length, gu.level);
 						sendData(gu.name, gu.prefix, sUsername, sRank, sServer, onlineList, gu.members.length, gu.level);
 						console.log(`${gu.name} (${gu.prefix})\n${sUsername} ${sRank} ${sServer}`);
 						console.log(`${m} ${gu.members.length}`);
@@ -1036,7 +1111,7 @@ client.on('message', message => {
 		}
 	}
 
-else if (cmd == "function") {
+else if (cmd == "function" && (message.author.id == "246865469963763713" || message.member.roles.cache.has('600185623474601995'))) {
 	try {
 	return eval(`${args[0]}(message);`);
 	}
@@ -1045,14 +1120,406 @@ else if (cmd == "function") {
 	}
 }
 
+else if (cmd == "p") {
+	var rand = Math.round(Math.random());
+	if (rand == 0) {
+		var colour = '#fff';
+	}
+	else if (rand == 1) {
+		var colour = '#000';
+	}
+	fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
+	.then(res => res.json())
+	.then(function (json) {
+	if (!data[0]) {
+		message.channel.send('Username not found.');
+		return;
+	}
+		var highest_class = json.data[0].classes[0].name.replace(/([0-9])/g, "");
+		switch (highest_class) {
+			case "mage":
+				highest_class = "Mage";
+				break;
+			case "shaman":
+				highest_class = "Shaman";
+				break;
+			case "assassin":
+				highest_class = "Assassin";
+				break;
+			case "warrior":
+				highest_class = "Warrior";
+				break;
+			case "archer":
+				highest_class = "Archer";
+				break;
+			case "darkwizard":
+				highest_class = "Dark Wizard";
+				break;
+			case "skyseer":
+				highest_class = "Skyseer";
+				break;
+			case "knight":
+				highest_class = "Knight";
+				break;
+			case "ninja":
+				highest_class = "Ninja";
+				break;
+			case "hunter":
+				highest_class = "Hunter";
+				break;
+			default:
+				highest_class = "Unknown";
+				break;
+		}
+
+		if (!json.data[0].username) {
+			message.channel.send('Username not found !');
+			return;
+		}
+		async function send_img() {
+			message.channel.send({
+				files: [`./buffer.png`]
+			});
+		}
+	
+		function save() {
+			const buffer = canvas.toBuffer('image/png');
+			fs.writeFileSync('./buffer.png', buffer);
+		}
+
+		async function load(rand) {
+			loadImage(`./${rand}.png`)
+			.then((image) => {
+				ctx.drawImage(image, 0, 0, width, height);
+			});
+		}
+		if (!json.data[0].meta.location.online) {
+		var lastSeen = Date.now() - Date.parse(json.data[0].meta.lastJoin)
+			years = Math.floor(lastSeen / (365 * 24 * 60 * 60 * 1000));
+			days = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
+			hours = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+			minutes = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000) - hours * (60 * 60 * 1000)) / (60 * 1000));
+			output = `${years > 0 ? years + " years " : ""}${days > 0 ? days + " days " : ""}${hours > 0 ? hours + " hours " : ""}${minutes > 0 ? minutes + " minutes " : ""}`;
+			output = (output[output.length - 1] == ":" ? output.slice(0, -1) : output).concat('ago');
+		}
+		else if (json.data[0].meta.location.online) output = "Online";
+	
+		async function add() {
+			await load(rand);   //wait for the image to load
+			//username, tag and online
+			ctx.font = 'bold 55pt Ubuntu';
+			ctx.textAlign = 'left';
+			ctx.fillStyle = colour;
+			ctx.fillText(`${json.data[0].username}`, 75, 125);
+			var textWidth = ctx.measureText(json.data[0].username).width;
+			ctx.font = '55pt Ubuntu';
+			if (json.data[0].meta.tag.value != null) {
+				if (json.data[0].meta.location.online) {
+				ctx.fillText(`[${json.data[0].meta.tag.value}]  [${json.data[0].meta.location.server}]`, textWidth + 100, 125)
+				}
+				else if (!json.data[0].meta.location.online) {
+				ctx.fillText(`[${json.data[0].meta.tag.value}]`, textWidth + 100, 125)
+				}
+			}
+			//guild and their rank
+			if (json.data[0].guild.name == null) {
+				var guild = "No guild"
+			}
+			else if (json.data[0].guild.name != null) {
+				var guild = `${json.data[0].guild.rank}  of  ${json.data[0].guild.name}`
+			}
+			ctx.font = '35pt Ubuntu';
+			ctx.fillText(`${guild}`, 75, 195);
+			
+			// informations
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Total level  :', 75, 300);
+			var textWidth = ctx.measureText("Total level  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`C ${json.data[0].global.totalLevel.combat.toLocaleString('en-US')} + P ${json.data[0].global.totalLevel.profession.toLocaleString('en-US')} = ${json.data[0].global.totalLevel.combined.toLocaleString('en-US')}`, 100 + textWidth, 300);
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Total playtime  :', 75, 375);
+			var textWidth = ctx.measureText("Total playtime  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${Math.round(Math.floor(json.data[0].meta.playtime)/60*4.7).toLocaleString('en-US')} hours`, 100 + textWidth, 375);
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Total mobs killed  :', 75, 450);
+			var textWidth = ctx.measureText("Total mobs killed  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${json.data[0].global.mobsKilled.toLocaleString('en-US')} mobs`, 100 + textWidth, 450);
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Total chests opened  :', 75, 525);
+			var textWidth = ctx.measureText("Total chests opened  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${json.data[0].global.chestsFound.toLocaleString('en-US')} chests`, 100 + textWidth, 525);
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Logins/Deaths  :', 75, 600);
+			var textWidth = ctx.measureText("Logins/Deaths  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${json.data[0].global.logins.toLocaleString('en-US')}/${json.data[0].global.deaths.toLocaleString('en-US')} times`, 100 + textWidth, 600);
+	
+			// last seen
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Last seen  :', 75, 675);
+			var textWidth = ctx.measureText("Last seen  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${output}`, 100 + textWidth, 675);
+	
+			var firstJoin = Date.now() - Date.parse(json.data[0].meta.firstJoin)
+			years = Math.floor(firstJoin / (365 * 24 * 60 * 60 * 1000));
+			days = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
+			hours = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+			minutes = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000) - hours * (60 * 60 * 1000)) / (60 * 1000));
+			output = `${years > 0 ? years + " years " : ""}${days > 0 ? days + " days " : ""}${hours > 0 ? hours + " hours " : ""}${minutes > 0 ? minutes + " minutes " : ""}`;
+			output = output[output.length - 1] == ":" ? output.slice(0, -1) : output;
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Joined  :', 75, 750);
+			var textWidth = ctx.measureText("Joined  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${output}ago`, 100 + textWidth, 750);
+	
+			ctx.font = 'bold 45pt Ubuntu';
+			ctx.fillText('Highest leveled class  :', 75, 825);
+			var textWidth = ctx.measureText("Highest leveled class  :").width;
+			ctx.font = '45pt Ubuntu';
+			ctx.fillText(`${highest_class} [${json.data[0].classes[0].professions.combat.level}/${json.data[0].classes[0].level.toLocaleString('en-US')}]`, 100 + textWidth, 825);
+
+			ctx.font = '25pt Ubuntu';
+			ctx.textAlign = 'right'
+			ctx.fillStyle = "#fff";
+			ctx.globalAlpha = 0.1;
+			ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
+			ctx.globalAlpha = 1;
+		}
+			add();
+			setTimeout(save, 1);
+			send_img();
+	})
+	.catch(function (error) {
+		console.log(error);
+	});
+}
+
+else if (cmd == "gs") {
+	if (args.length == 0) var guild = "Empire+of+Sindria";
+	else if (args.length != 0) var guild = message.content.replace(`${prefix}${cmd} `, '').replace(/ /g, "+");
+	fetch(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${guild}`)
+	.then(res => res.json())
+	.then(function (json) {
+
+		var owner = json.members.find(m => m.rank == "OWNER")
+
+	async function send_img() {
+		message.channel.send({
+			files: [`./buffer.png`]
+		});
+	}
+
+	function save() {
+		const buffer = canvas.toBuffer('image/png');
+		fs.writeFileSync('./buffer.png', buffer);
+	}
+
+	async function load() {
+		loadImage(`./gs.png`)
+		.then((image) => {
+			ctx.drawImage(image, 0, 0, width, height);
+		});
+	}
+
+	async function add() {
+		await load();
+		//put all the canvas here
+		ctx.font = 'bold 55pt Ubuntu';
+		ctx.textAlign = 'left';
+		ctx.fillStyle = '#fff';
+		ctx.fillText(`${json.name}`, 75, 125);
+		var textWidth = ctx.measureText(json.name).width;
+		ctx.font = '55pt Ubuntu';
+		ctx.fillText(`[${json.prefix}]`, 125 + textWidth, 125);
+		ctx.font = '35pt Ubuntu';
+		ctx.fillText(`Owned by `, 75, 185);
+		var textWidth = ctx.measureText('Owned by ').width;
+		ctx.font = 'bold 35pt Ubuntu';
+		ctx.fillText(`${owner.name}`, 75 + textWidth, 185);
+
+		ctx.font = 'bold 45pt Ubuntu';
+		var textWidth = ctx.measureText("Level  :").width;
+		ctx.fillText('Level  :', 75, 300);
+		ctx.font = '45pt Ubuntu';
+		ctx.fillText(`${json.level}  |  ${json.xp*10}%`, 125 + textWidth, 300);
+
+		ctx.font = 'bold 45pt Ubuntu';
+		var textWidth = ctx.measureText("Created  :").width;
+		ctx.fillText('Created  :', 75, 375);
+		ctx.font = '45pt Ubuntu';
+		ctx.fillText(`${json.createdFriendly}`, 125 + textWidth, 375);
+
+		ctx.font = 'bold 45pt Ubuntu';
+		var textWidth = ctx.measureText("Total members  :").width;
+		ctx.fillText('Total members  :', 75, 450);
+		ctx.font = '45pt Ubuntu';
+		ctx.fillText(`${json.members.length}`, 125 + textWidth, 450);
+
+		ctx.font = 'bold 45pt Ubuntu';
+		var textWidth = ctx.measureText("Total territories  :").width;
+		ctx.fillText('Total territories  :', 75, 525);
+		ctx.font = '45pt Ubuntu';
+		ctx.fillText(`${json.territories}`, 125 + textWidth, 525);
+
+
+		//credits
+		ctx.font = '25pt Ubuntu';
+		ctx.textAlign = 'right'
+		ctx.fillStyle = "#fff";
+		ctx.globalAlpha = 0.25;
+		ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
+		ctx.globalAlpha = 1;
+	}
+	add();
+	setTimeout(save, 1);
+	send_img();
+})
+.catch(function (error) {
+	message.channel.send('An error has occured.');
+});
+}
+
 else if (cmd == "sp") {
+	var world_arr = [];
+	var sorted_worlds = [];
+	var offset = parseInt(args[0]) * 60000;
+	if (isNaN(offset)) offset = -120000;
 	fetch('https://athena.wynntils.com/cache/get/serverList')
 	.then(res => res.json())
 	.then(json => {
-		var sortedWC = json.sort((d1, d2) => {
-			return d1.firstSeen - d2.firstSeen
-		});
-		var buffered = "";
+
+		async function send_img() {
+			message.channel.send({
+				files: [`./buffer.png`]
+			});
+		}
+		function save() {
+			const buffer = canvas.toBuffer('image/png');
+			fs.writeFileSync('./buffer.png', buffer);
+		}
+		async function load() {
+			loadImage(`./sp.png`)
+			.then((image) => {
+				ctx.drawImage(image, 0, 0, width, height);
+			});
+		}
+
+		// sp regen every 1200000 ms
+
+		for (let world in json.servers) {
+			world_arr.push([world, Date.now() - json.servers[world].firstSeen]);
+		}
+		sorted_worlds = world_arr.sort((a, b) => {return a[1] -b[1]});
+
+		for (let fsorted in sorted_worlds) {
+			sorted_worlds[fsorted][1] = 20 - ((sorted_worlds[fsorted][1] - offset) % 1200000 / 1000 / 60);
+		}
+		sorted_worlds = sorted_worlds.sort((a, b) => {return a[1] -b[1]});
+		for (let fsorted in sorted_worlds) {
+			sorted_worlds[fsorted][1] = Math.ceil(sorted_worlds[fsorted][1]);
+			for (var world_name_length = sorted_worlds[fsorted][0].length; world_name_length < 4 ; world_name_length++) {
+				sorted_worlds[fsorted][0].concat(' ');
+			}
+		}
+		console.log(sorted_worlds);
+		async function add() {
+			await load();
+
+			ctx.font = 'bold 55pt Ubuntu';
+			ctx.textAlign = 'left';
+			ctx.fillStyle = '#fff';
+			ctx.fillText(`Soul Points`, 75, 125);
+			var textWidth = ctx.measureText('Soul Points  ').width;
+			if (!offset == 0) {
+				ctx.font = '55pt Ubuntu';
+				ctx.fillText(`[ ${offset/60000} minute(s) offset ]`, 75 + textWidth, 125);
+			}
+			ctx.font = '35pt Ubuntu';
+			ctx.fillText(`Time until next Soul Point regen. Stolen from Zinnig.`, 75, 185);
+
+			// 75 150 225 300 375 425 500 575 650 725 800
+				if (sorted_worlds.length < 8) {
+					console.log(8);
+					for (var spworld in sorted_worlds) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
+						if (spworld == 8) break;
+					}
+				}
+				else if (sorted_worlds.length > 8 && sorted_worlds < 17) {
+					console.log(19);
+					for (var spworld = 0; spworld < 9; spworld++) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
+					}
+					for (var spworld = 9; spworld < sorted_worlds.length; spworld++) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 31 + 485 + 85, 300 + ((spworld - 8) * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 31 + 210 + 85 + 485, 300 + ((spworld - 8) * 75));
+					}
+				}
+				else if (sorted_worlds.length >= 19) {
+					console.log('more than 19');
+					for (var spworld = 0; spworld < 8; spworld++) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
+					}
+					for (var spworld = 8; spworld < 16; spworld++) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 31 + 485 + 85, 300 + ((spworld - 8) * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 31 + 210 + 85 + 485, 300 + ((spworld - 8) * 75));
+						if (spworld == 16) break;
+					}
+					for (var spworld = 16; spworld < 24; spworld++) {
+						ctx.font = 'bold 45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 62 + 970 + 85, 300 + ((spworld - 16) * 75));
+						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
+						ctx.font = '45pt Ubuntu';
+						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 62 + 210 + 85 + 970, 300 + ((spworld - 16) * 75));
+						if (spworld == 24) break;
+					}
+				}
+
+		//credits
+		ctx.font = '25pt Ubuntu';
+		ctx.textAlign = 'right'
+		ctx.fillStyle = "#fff";
+		ctx.globalAlpha = 0.1;
+		ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
+		ctx.globalAlpha = 1;
+		}
+
+	add();
+	setTimeout(save, 1);
+	send_img();
+		})
+	.catch(function (error) {
+		message.channel.send(`An error has occured.`);
+		console.log(error);
 	})
 }
 
@@ -1084,6 +1551,14 @@ else if (cmd == "sp") {
 		}
 	}			
 });
+
+function data_caching() {
+	fetch('https://api.wynncraft.com/public_api.php?action=guildStats&command=Empire+of+Sindria')
+	.then(res => res.json())
+	.then(function (json) {
+		cache = json;
+	})
+}
 
 function guildMemberUpdateListener() {
 	var currentGuildMemberData = {};
@@ -1222,7 +1697,7 @@ function resetPingCounter() {
 }
 
 function ping(terrData, count) {
-	if (terrClaimPingEnabled == false) return;
+	if (!terrClaimPingEnabled) return;
 	else {
 	const Ping = new Discord.MessageEmbed()
 		.setTitle('Territory manager - Detected missing claims (Temporary)')
@@ -1237,12 +1712,14 @@ function ping(terrData, count) {
 setInterval(guildMemberUpdateListener, 60000);
 setInterval(get_territory, 300000);
 setInterval(resetPingCounter, 86400000);
+setInterval(data_caching, 900000);
 
 //event listener 'message' 
 client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
 
-// DSC client [ NOT discord.js client ]
 const token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'});
-client.login(token);
+client.login(token).catch(function (error) {
+	console.log('WebSocket Timeout')
+});
