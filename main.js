@@ -25,7 +25,7 @@ const python_playtime = spawn("python3.9", ["Playtime.py"]);
 const java = spawn('java', ['-jar', 'sub.jar']);
 const port = 8080;
 var cache = "";
-var prefix = "$";
+var prefix = ".";
 var eat_prefix = ">";
 var previousGuildMemberCount = 0;
 var previousGuildMemberData = {};
@@ -120,7 +120,6 @@ python_playtime.on('exit', (code) => {
 java.on('exit', (code) => {
 	console.log('Process exited with code : ' + code);
 });
-
 
 function addApplying(name) {
 	applying.push(name);
@@ -264,11 +263,21 @@ client.on('message', message => {
 			var nickname = message.member.nickname;
 		}
 
-		if (message.mentions.members.first().nickname == null) {
-			var ate = message.mentions.members.first().user.username;
+		if (!message.mentions.members.first()) {
+			try {
+				var ate = message.mentions.members.first().user.username;
+			}
+			catch (e) {
+				var ate = args.join(' ');
+			}
 		}
 		else if (message.mentions.members.first().nickname != null) {
-			var ate = message.mentions.members.first().nickname;
+			try {
+				var ate = message.mentions.members.first().nickname;
+			}
+			catch (e) {
+				message.channel.send('An error has occured.')
+			}
 		}
 
 		const eat_embed = new Discord.MessageEmbed()
@@ -336,10 +345,6 @@ client.on('message', message => {
 				if (err) throw (err);
 				var data = JSON.parse(body);
 				if (data.data[0]) {
-					if (!data[0]) {
-						message.channel.send("Username not found.\nIf you changed your username recently, try using your old username or UUID.");
-						return;
-					}
 					var username = data.data[0].username;
 					var guild = JSON.stringify(data.data[0].guild.name).replace('"', '').replace('"', '');
 					
@@ -780,7 +785,7 @@ client.on('message', message => {
 									let username = JSON.stringify(data.data[0].username).replace('"', '').replace('"', '');
 									let levelClassHighest = prevClass.toFixed(0);
 									let levelTotal = data.data[0].global.totalLevel.combined.toFixed(0);
-									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${levelClassHighest}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
+									message.guild.channels.cache.get(result.id).send(`Username : ${username}\nTotal Level: ${levelTotal}\nHighest Combat Level: ${levelClassHighest}\n\n<@${message.author.id}> Please check that your above details are correct and fill out the application form:\n\nCountry/Timezone:\nPreferred Pronouns (optional):\nAge (optional):\nHow did you find ESI?\nHow can you contribute to ESI?\nWhat is your highest combat level class?\nHow active are you on Wynncraft?\nWhat do you enjoy about Wynncraft?\nBesides playing Wynn, what else do you enjoy doing?\nPrevious Guilds you’ve been in and why you’ve left them:\nAdditional Notes:`);
 								}
 							});
 						});
