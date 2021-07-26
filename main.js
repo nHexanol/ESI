@@ -24,14 +24,14 @@ const terr_width = 1332;
 const terr_height = 759;
 const canvas2 = createCanvas(terr_width, terr_height);
 const ctx2 = canvas2.getContext('2d');
-/*
+
 const python_guilds = spawn("python3.9", ["guilds.py"]);
 const python_playtime = spawn("python3.9", ["Playtime.py"]);
 const java = spawn('java', ['-jar', 'sub.jar']);
-*/
+
 const port = 8080;
 var cache = "";
-var prefix = "$";
+var prefix = ".";
 var eat_prefix = ">";
 var previousGuildMemberCount = 0;
 var previousGuildMemberData = {};
@@ -109,7 +109,7 @@ var ESIClaims = [
 	'Iron Road'
   ]
 
-  /*
+
 python_guilds.stdout.on('data', (data) => {
 	var output = uint8arrayToString(data);
 	console.log(uint8arrayToString(data));
@@ -157,7 +157,7 @@ python_playtime.on('exit', (code) => {
 java.on('exit', (code) => {
 	console.log('Process exited with code : ' + code);
 });
-*/
+
 function addApplying(name) {
 	applying.push(name);
 }
@@ -1578,30 +1578,25 @@ else if (cmd == "sp") {
 	}
 
 	else if (cmd == "pt") {
-
 		function send_data(username, pt) {
 			const playtime_embed = new  Discord.MessageEmbed()
 			.setTitle(`Playtime (${days_back}d)`)
-			.setColor('#26ff60')
+			.setColor('#8e059e')
 			.addFields(
-				{name: "Name", value: username, inline: true},
-				{name: "Playtime", value: pt, inline: true},
+				{name: "Name", value: `t${username}`, inline: true},
+				{name: "Playtime", value: `t${pt}`, inline: true},
 			)
-			.setColour('#8e059e')
-
+			console.log(`${username} ${pt}`);
+			message.channel.send(playtime_embed);
 		}
-		if (args[1] === "-r")
-
-		if (args.length < 1 || args[0] === "-r") {
+		if (args.length < 1) {
 			days_back = 14;
 		}
 		else if (args[0] && args[0] != "-r") {
 			days_back = parseInt(args[0]);
 		}
-		var member_name = "";
-		var member_playtime = "";
-		var pt_data_now = fs.readFileSync(`./playtime/${Math.ceil(Date.now() / 86400000)}`);
-		var pt_data = fs.readFileSync(`./${Math.ceil(Date.now() / 86400000) - days_back}`);
+		var pt_data_now = fs.readFileSync(`./playtime/${Math.ceil(Date.now() / 86400000)}.txt`);
+		var pt_data = fs.readFileSync(`./playtime/${Math.ceil(Date.now() / 86400000) - days_back}.txt`);
 		var playtime_old = JSON.parse(pt_data);
 		var playtime_now = JSON.parse(pt_data_now);
 
@@ -1609,19 +1604,30 @@ else if (cmd == "sp") {
 		var members_pt = "";
 		// [0] username, [1] playtime
 		for (var player in playtime_old) {
-			if (playtime_old[player][0] == playtime_now[player[0]]) {
-
 				var hrs_old = Math.trunc(playtime_old[player][1]/60*4.7);
-				var mins_old = (hrs - Math.floor(playtime_old[player][1]/60*4.7)) * 60;
+				var mins_old = (hrs_old - playtime_old[player][1]/60*4.7).toFixed(2) * 60;
 
 				var hrs_now = Math.trunc(playtime_now[player][1]/60*4.7);
-				var mins_now = (hrs - Math.floor(playtime_now[player][1]/60*4.7)) * 60;
+				var mins_now = (hrs_now - playtime_now[player][1]/60*4.7).toFixed(2) * 60;
 
-				member_name += `${playtime_old[player][0]}\n`;
-				members_pt += `${hrs_now - hrs_old}:${mins_now - mins_old}\n`;
-			}
+				console.log(hrs_old + hrs_now);
+				
+				members_name += `${playtime_old[player][0].replace(/_/g, "\\_")}\n`;
+				console.log(members_name);
+				members_pt += `${hrs_now - hrs_old}h ${mins_now - mins_old}m\n`;
 		}
-		send_data(members_name, members_pt);
+		var embed_count = Math.floor(playtime_old.length) / 10;
+		var s = playtime_old.length % 10
+
+		var playtime_embed = new  Discord.MessageEmbed()
+		.setTitle(`Playtime (${days_back}d)`)
+		.setColor('#8e059e')
+		.addFields(
+			{name: "Name", value: `t${members_name}`, inline: true},
+			{name: "Playtime", value: `${members_pt}`, inline: true},
+		)
+		console.log(`${members_name} ${members_pt}`);
+		message.channel.send(playtime_embed);
 	}
 
 	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
@@ -2172,7 +2178,7 @@ async function get_guild_member_playtime() {
 			return b[1] - a[1];
 		});
 	}
-	fs.appendFileSync(`./playtime/${Math.ceil(Date.now() / 86400000)}.txt`, JSON.stringify(guild_playtime));
+	fs.writeFileSync(`./playtime/${Math.ceil(Date.now() / 86400000)}.txt`, JSON.stringify(guild_playtime));
 
 }
 
