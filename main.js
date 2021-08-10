@@ -303,20 +303,35 @@ client.on('message', message => {
 		}
 
 		if (message.member.nickname == null) {
-			var nickname = message.author.username
+			var nickname = message.member.displayName;
 		}
 		else if (message.member.nickname != null) {
 			var nickname = message.member.nickname;
 		}
-
+		if(!args[0]){
+			try {
+			var ate = "nothing xdrofl";
+			} catch (e) {
+				message.channel.send('An error has occured.')
+			}
+		}
 		if (!message.mentions.members.first()) {
 			try {
-				var ate = message.mentions.members.first().user.username;
+				var ate = message.mentions.members.first().nickname;
 			}
 			catch (e) {
 				var ate = args.join(' ');
 			}
+
+		}else if (message.mentions.members.first().nickname == null) {
+			try {
+				var ate = message.mentions.members.first().displayName;
+			}
+			catch (e) {
+				message.channel.send('An error has occured.')
+			}
 		}
+
 		else if (message.mentions.members.first().nickname != null) {
 			try {
 				var ate = message.mentions.members.first().nickname;
@@ -344,12 +359,9 @@ client.on('message', message => {
 	}
 
 	if (cmd == "find") {
-		if(!args[0]) return message.channel.send("Please provide a username to find...")
 		fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
-		
 		.then(res => res.json())
 		.then((json => {
-			if(json.code === 400) return message.channel.send("Minecraft username is not valid")
 			if (!json.data[0].meta.location.online) var online = `${args[0]} is not currently online any Wynncraft server....`;
 			else if (json.data[0].meta.location.online) var online = `${args[0]} is currently on server ${json.data[0].meta.location.server}`;
 			message.channel.send(online);
