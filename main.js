@@ -976,29 +976,37 @@ client.on('message', message => {
 	}
 
 	else if (cmd == "ls") {
-		function sendData (players, count) {
-			const playerls = new Discord.MessageEmbed()
-			.setTitle('Player list')
-			.setColor('#009eff')
-			.setDescription(`\`\`\`\n${players}\n\`\`\``)
-			.setFooter(`${count} players online`)
-			message.channel.send(playerls);
+		const playerls = new Discord.MessageEmbed()
+			
+		playerls.setColor('#009eff')
+
+	if (args.length == 0) return message.channel.send(`Usage : \`${prefix}ls (world)\``);
+  
+	if (isNaN(args[0])) return message.channel.send("Argument must contain number.");
+	
+	var output = "";
+	var playerCounter = 0;
+	
+	var input = "WC" + args[0]
+	fetch('https://api.wynncraft.com/public_api.php?action=onlinePlayers')
+	.then(res => res.json())
+	.then(function (json) {
+		if(!json[input]) return message.channel.send("That world doesn't exist. (According to wynncraft api)")
+		inputFormatted = json[input];
+		for (const m in inputFormatted) {
+			inputFormatted = json[input];	output = output.concat(`${inputFormatted[m]}\n`);
+			playerCounter++
 		}
-		if (args.length == 0) return message.channel.send(`Usage : \`${prefix}ls (world)\``);
-		var input = parseInt(args[0]);
-		var output = "";
-		var playerCounter = 0;
-		if (!typeof(input) == "number") return message.channel.send("Argument must contain number.");
-		fetch('https://api.wynncraft.com/public_api.php?action=onlinePlayers')
-		.then(res => res.json())
-		.then(function (json) {
-			inputFormatted = json[`WC${input}`];
-			for (const m in inputFormatted) {
-				inputFormatted = json[`WC${input}`];	output = output.concat(`${inputFormatted}\n`);
-				playerCounter++
-			}
-			sendData(output, playerCounter);
-		});
+
+		
+		playerls.setTitle(`Player list for ${input}`)
+		 playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
+		playerls.setFooter(`${playerCounter} players online`)
+		message.channel.send(playerls)
+	
+	
+		
+	});
 	}
 
 	else if (cmd == "requestGuild") {
