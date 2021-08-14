@@ -1390,7 +1390,7 @@ else 	if(cmd == "tl"){
 		if(!args[0]) return message.channel.send("Please provide a guild's tag (no name XD)")
 		let gprefix = args[0].toLowerCase()
 		let terrs = []
-		await fetch('https://athena.wynntils.com/cache/get/territoryList')
+		fetch('https://athena.wynntils.com/cache/get/territoryList')
 		.then(response => response.json())
 		.then(json => {
 			
