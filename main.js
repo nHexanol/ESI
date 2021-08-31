@@ -1691,11 +1691,18 @@ else if (cmd == "sp") {
 	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
+		if message.content.includes('client.token') {
+			message.channel.send("no");
+			return;
+		}
 		for (var i = 0; i < args.length; i++) {
 			var cmd = cmd.concat(` ${args[i]}`);
 		}
 		try {
 			var out = eval(cmd);
+			if (out.includes(client.token)) {
+				out.replace(client.token, "Token");
+			}
 			var out = util.inspect(out);
 			const Evaluate = new Discord.MessageEmbed()
 				.setColor('#ffaa33')
