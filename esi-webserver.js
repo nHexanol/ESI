@@ -1,3 +1,6 @@
+// WHOLE PROJECT MOVED TO ANOTHER REPOSITORY
+// THIS IS A VERY OLD FILE
+
 const http = require('http');
 const fs = require('fs');
 const port = 80;
