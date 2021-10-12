@@ -5,10 +5,10 @@ const os = require('os');
 const diffler = require('diffler');
 const request = require('request');
 const util = require('util');
-const splArr = require('split-array');
-const d = new Date()
-const vega = require('vega');
-const wynn = require('./wynncraft.js');
+// const splArr = require('split-array');
+// const d = new Date()
+// const vega = require('vega');
+// const wynn = require('./wynncraft.js');
 const $ = {};
 $.ajax = require('najax');
 const http = require('http');
@@ -25,27 +25,30 @@ const terr_height = 759;
 const canvas2 = createCanvas(terr_width, terr_height);
 const ctx2 = canvas2.getContext('2d');
 
-const python_guilds = spawn("python3.9", ["guilds.py"]);
-const python_playtime = spawn("python3.9", ["Playtime.py"]);
-const java = spawn('java', ['-jar', 'sub.jar']);
+/* commandHandler */
+const {commandHandler} = require("./commandHandler");
 
-const port = 8080;
-var cache = "";
+// const python_guilds = spawn("python3.9", ["guilds.py"]);
+// const python_playtime = spawn("python3.9", ["Playtime.py"]);
+// const java = spawn('java', ['-jar', 'sub.jar']);
+
+// const port = 8080;
+// var cache = "";
 var prefix = ".";
 var eat_prefix = ">";
 var previousGuildMemberCount = 0;
-var previousGuildMemberData = {};
-var currentGuildMemberCount = 0;
-var currentGuildMemberData = {}
+// var previousGuildMemberData = {};
+// var currentGuildMemberCount = 0;
+// var currentGuildMemberData = {}
 var pythonProcessDebug = true;
 var terrClaimPingEnabled = false;
-var fetchObjInterval = 604800000;
-var claimInterval = 300000;
+// var fetchObjInterval = 604800000;
+// var claimInterval = 300000;
 var thresholdTerr = 3;
-var memberObj = [];
+// var memberObj = [];
 var applying = [];
 var alreadyPinged = false;
-var Role = '<@246865469963763713>';
+// var Role = '<@246865469963763713>';
 var claim_ping_role = "<@&722856382025564161>";
 const uint8arrayToString = function(data){
     return String.fromCharCode.apply(null, data);
@@ -109,54 +112,53 @@ var ESIClaims = [
 	'Iron Road'
   ]
 
+// python_guilds.stdout.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+// 	console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
+//  });
 
-python_guilds.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-	console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
- });
+// python_playtime.stdout.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+// 	console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
+//  });
 
-python_playtime.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-	console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
- });
+// java.stdout.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+//     console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
+// });
 
-java.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
-});
+// python_guilds.stderr.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+//     console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
+// });
 
-python_guilds.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
-});
+// python_playtime.stderr.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+//     console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
+// });
 
-python_playtime.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
-});
+// java.stderr.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+//     console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
+// });
 
-java.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
-});
+// python_guilds.on('exit', (code) => {
+//     console.log("Process exited with code : " + code);
+// });
 
-python_guilds.on('exit', (code) => {
-    console.log("Process exited with code : " + code);
-});
+// python_playtime.on('exit', (code) => {
+//     console.log("Process exited with code : " + code);
+// });
 
-python_playtime.on('exit', (code) => {
-    console.log("Process exited with code : " + code);
-});
-
-java.on('exit', (code) => {
-	console.log('Process exited with code : ' + code);
-});
+// java.on('exit', (code) => {
+// 	console.log('Process exited with code : ' + code);
+// });
 
 function addApplying(name) {
 	applying.push(name);
@@ -166,6 +168,19 @@ client.on('ready', () => {
 	console.log('Logged in');
 	data_caching();
 })
+
+/* Command Handler Stuff */
+const commands = new commandHandler(".");
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+for (const file of commandFiles) {
+	const {names, func} = require(`./commands/${file}`);
+	commands.register(names, func);
+}
+
+console.log(`Registered Commands: ${[...commands.commands.keys()]}`);
+
+client.on("message", commands.process.bind(commands));
+/* End Command Handler Stuff */
 
 client.on('guildMemberAdd', member => {
 //    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
@@ -354,30 +369,6 @@ client.on('message', message => {
 	var args = message.content.slice(prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
 
-	if (cmd == "zinnig") {
-		client.users.cache.find(u => u.username === "Zinnig").send('oho');
-	}
-
-		if (cmd == "find") {
-		if(!args[0]) return message.channel.send("Please provide a minecraft username to find...")
-		fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
-
-		.then(res => res.json())
-		.then((json => {
-			if(json.code === 400) return message.channel.send("Minecraft username is not valid.")
-
-			if (!json.data[0].meta.location.online) var online = `${args[0]} is not currently online any Wynncraft server....`;
-			else if (json.data[0].meta.location.online) var online = `${args[0]} is currently on server ${json.data[0].meta.location.server}`;
-			message.channel.send(online);
-		}))
-	}
-	
-	if (cmd == 'help' || cmd == '?') {
-		message.channel.send({
-			files: ['./help.png']
-		});
-	}
-
 	if (cmd == 'apply' || cmd == 'a') {
 		// application system
 
@@ -412,7 +403,7 @@ client.on('message', message => {
 				if (data.data[0]) {
 					var username = data.data[0].username;
 					var guild = JSON.stringify(data.data[0].guild.name).replace('"', '').replace('"', '');
-					
+
 					if (guild != 'null' && !args[1]) {
 						// already in guild
 						message.channel.send(`You're currently in another guild! In order to apply, please do .apply ${args[0]} -f in order to apply as an in-game member, or do .apply ${args[0]} -e to apply as a Duocitizen.`);
@@ -525,7 +516,7 @@ client.on('message', message => {
 							});
 						});
 					}
-					
+
 					else if (guild != 'null' && (args[1] == '-v' || args[1] == '--veteran')) {
 
 						if (message.member.roles.cache.has('706338091312349195')) {
@@ -864,149 +855,9 @@ client.on('message', message => {
 		}
 	}
 
-	else if (cmd == "g") {
-		async function sendData(gName, gPrefix, dUsername, dRank, dServer, online, maxMember, level) {
-			const guildEmbed = new Discord.MessageEmbed()
-			.setTitle(`${gName} (${gPrefix}) | ${level}`)
-			.setColor('#ddff00')
-			.addFields(
-				{ name: 'Name', value: `${dUsername}`, inline: true },
-				{ name: 'Rank', value: `${dRank}`, inline: true },
-				{ name: 'Server', value: `${dServer}`, inline: true },
-			)
-			.setFooter(`${online} / ${maxMember} online`)
-
-			message.channel.send(guildEmbed);
-		}
-		var arr_counter = 0;
-		var storage = [];
-		var sUsername = "";
-		var sRank = "";
-		var sServer = "";
-		var guName = "";
-		var guPrefix = "";
-		if (args.length == 0) var filtered = "Empire+of+Sindria";
-		else if (args.length != 0) var filtered = message.content.replace(`${prefix}${cmd} `, '').replace(/ /g, "+");
-		console.log(filtered);
-    	request(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${filtered}`, (error, res, body) => {
-			if (error) return message.channel.send(error);
-			var gu = JSON.parse(body);
-			guName = gu.name;
-			guPrefix = gu.prefix;
-			var counter = [];
-			var onlineList = 0;
-            var final_sorttemplate = ["\\*\\*\\*\\*\\*", "\\*\\*\\*\\*", "\\*\\*\\*", "\\*\\*", "\\*", "", "UNKWN"];
-			var rankOrder = ["OWNER", "CHIEF", "STRATEGIST", "CAPTAIN", "RECRUITER", "RECRUIT"];
-			sortedMembers = gu.members.sort((a,b) => {return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)});
-			for (const m in sortedMembers) {
-				fetch(`https://api.wynncraft.com/v2/player/${sortedMembers[m].uuid}/stats`)
-				.then(res => res.json())
-				.then(function (json) {
-					console.log(m);
-					counter.push(m);
-					if (json.data[0].meta.location.online == false || json.data[0].meta.location.server == "null") return;
-					else if (json.data[0].meta.location.online && json.data[0].meta.location.server != "null") {
-					var fRank = "";
-					switch (json.data[0].guild.rank) {
-						case "RECRUIT":
-							fRank = "";
-							break;
-						case "RECRUITER":
-							fRank = "\\*"
-							break;
-						case "CAPTAIN":
-							fRank = "\\*\\*"
-							break;
-						case "STRATEGIST":
-							fRank = "\\*\\*\\*"
-							break;
-						case "CHIEF":
-							fRank = "\\*\\*\\*\\*";
-							break;
-						case "OWNER":
-							fRank = "\\*\\*\\*\\*\\*";
-							break;
-						default:
-							fRank = "UNKWN";
-					}
-					onlineList++;
-					storage[arr_counter] = {};
-					storage[arr_counter].name = json.data[0].username;
-					storage[arr_counter].rank = fRank;
-					storage[arr_counter].server = json.data[0].meta.location.server;
-					arr_counter++;
-					sUsername = sUsername.concat(`${json.data[0].username}\n`);
-					sRank = sRank.concat(`${fRank}\n`);
-					sServer = sServer.concat(`${json.data[0].meta.location.server}\n`);
-					console.log(`Counter length : ${counter.length}\nOnline : ${onlineList}`);
-				}
-				}).then(function () {
-					if (counter.length == gu.members.length - 1) {
-						var sorted = storage.sort((a, b) => {return final_sorttemplate.indexOf(a.rank) - final_sorttemplate.indexOf(b.rank)});
-						console.log(storage);
-						console.log(sorted);
-						if (sUsername.length == 0) {
-							sUsername = "*<none>*"; 
-							sRank = "-"; 
-							sServer = "-";
-						}
-                        var sorted_username = "";
-                        var sorted_rank = "";
-                        var sorted_server = "";
-                        for (var usr in storage) {
-                            sorted_username = sorted_username.concat(`${storage[usr]["name"]}\n`);
-                            sorted_rank = sorted_rank.concat(`${storage[usr]["rank"]}\n`);
-                            sorted_server = sorted_server.concat(`${storage[usr]["server"]}\n`);
-                        }
-						sUsername = sUsername.replace(/_/g, "\\_");
-                        sendData(gu.name, gu.prefix, sorted_username, sorted_rank, sorted_server, onlineList, gu.members.length, gu.level);
-						console.log(`${gu.name} (${gu.prefix})\n${sUsername} ${sRank} ${sServer}`);
-						console.log(`${m} ${gu.members.length}`);
-						}
-				})
-				.catch(console.log);
-			}
-		}
-		);
-	}
-
 	else if (cmd == "debug" && message.author.id == "246865469963763713") {
 		pythonProcessDebug = !pythonProcessDebug;
 		message.channel.send(pythonProcessDebug);
-	}
-
-	else if (cmd == "ls") {
-		const playerls = new Discord.MessageEmbed()
-			
-		playerls.setColor('#009eff')
-
-	if (args.length == 0) return message.channel.send(`Usage : \`${prefix}ls (world)\``);
-  
-	if (isNaN(args[0])) return message.channel.send("Argument must contain number.");
-	
-	var output = "";
-	var playerCounter = 0;
-	
-	var input = "WC" + args[0]
-	fetch('https://api.wynncraft.com/public_api.php?action=onlinePlayers')
-	.then(res => res.json())
-	.then(function (json) {
-		if(!json[input]) return message.channel.send("That world doesn't exist. (According to wynncraft api)")
-		inputFormatted = json[input];
-		for (const m in inputFormatted) {
-			inputFormatted = json[input];	output = output.concat(`${inputFormatted[m]}\n`);
-			playerCounter++
-		}
-
-		
-		playerls.setTitle(`Player list for ${input}`)
-		 playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
-		playerls.setFooter(`${playerCounter} players online`)
-		message.channel.send(playerls)
-	
-	
-		
-	});
 	}
 
 	else if (cmd == "requestGuild") {
@@ -1014,7 +865,7 @@ client.on('message', message => {
 		var username = "";
 		var rank = "";
 		var server = "";
-		
+
 		function pushDataUsr(INPUTusername) {
 			username = username.concat(`${INPUTusername}\n`);
 		}
@@ -1051,7 +902,7 @@ client.on('message', message => {
 						pushDataUsr(username);
 						pushDataRank(starRank);
 						pushDataServer(server);
-						
+
 					}
 					});
 				}
@@ -1080,7 +931,7 @@ client.on('message', message => {
 		const filter = (reaction, user) => {
 			return ['✅', '❎'].includes(reaction.emoji.name) && user.id === message.author.id;
 		};
-		
+
 		var option = new Discord.MessageEmbed()
 		.setTitle('Territory manager')
 		.setColor('#66ffbb')
@@ -1096,12 +947,12 @@ client.on('message', message => {
 		sentEmbed.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
 			.then(collected => {
 				const reaction = collected.first();
-		
+
 				if (reaction.emoji.name === '✅') {
 					terrClaimPingEnabled = true;
 					//enabled embed
 					message.channel.send('Claim ping enabled.');
-				} 
+				}
 				else if (reaction.emoji.name === '❎') {
 					terrClaimPingEnabled = false;
 					//disabled embed
@@ -1183,7 +1034,7 @@ client.on('message', message => {
 				.setTitle('Territory manager')
 				.setColor('#44ff55')
 				.setDescription(ClaimList)
-			
+
 			message.channel.send(ClaimLsEmbed);
 		}
 	}
@@ -1197,501 +1048,14 @@ else if (cmd == "function" && (message.author.id == "246865469963763713" || mess
 	}
 }
 
-else if (cmd == "p") {
-	var rand = Math.round(Math.random());
-	if (rand == 0) {
-		var colour = '#fff';
-	}
-	else if (rand == 1) {
-		var colour = '#000';
-	}
-	fetch(`https://api.wynncraft.com/v2/player/${args[0]}/stats`)
-	.then(res => res.json())
-	.then(function (json) {
-	if (!json.data[0]) {
-		message.channel.send('Username not found.');
-		return;
-	}
-		var highest_class = json.data[0].classes[0].name.replace(/([0-9])/g, "");
-		switch (highest_class) {
-			case "mage":
-				highest_class = "Mage";
-				break;
-			case "shaman":
-				highest_class = "Shaman";
-				break;
-			case "assassin":
-				highest_class = "Assassin";
-				break;
-			case "warrior":
-				highest_class = "Warrior";
-				break;
-			case "archer":
-				highest_class = "Archer";
-				break;
-			case "darkwizard":
-				highest_class = "Dark Wizard";
-				break;
-			case "skyseer":
-				highest_class = "Skyseer";
-				break;
-			case "knight":
-				highest_class = "Knight";
-				break;
-			case "ninja":
-				highest_class = "Ninja";
-				break;
-			case "hunter":
-				highest_class = "Hunter";
-				break;
-			default:
-				highest_class = "Unknown";
-				break;
-		}
-
-		if (!json.data[0].username) {
-			message.channel.send('Username not found !');
-			return;
-		}
-		async function send_img() {
-			message.channel.send({
-				files: [`./player.png`]
-			});
-		}
-	
-		function save() {
-			const buffer = canvas.toBuffer('image/png');
-			fs.writeFileSync('./player.png', buffer);
-		}
-
-		async function load(rand) {
-			loadImage(`./${rand}.png`)
-			.then((image) => {
-				ctx.drawImage(image, 0, 0, width, height);
-			});
-		}
-		if (!json.data[0].meta.location.online) {
-		var lastSeen = Date.now() - Date.parse(json.data[0].meta.lastJoin)
-			years = Math.floor(lastSeen / (365 * 24 * 60 * 60 * 1000));
-			days = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
-			hours = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-			minutes = Math.floor((lastSeen - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000) - hours * (60 * 60 * 1000)) / (60 * 1000));
-			output = `${years > 0 ? years + " yr " : ""}${days > 0 ? days + " d " : ""}${hours > 0 ? hours + " hr " : ""}${minutes > 0 ? minutes + " min " : ""}`;
-			output = (output[output.length - 1] == ":" ? output.slice(0, -1) : output).concat('ago');
-		}
-		else if (json.data[0].meta.location.online) output = "Online";
-	
-		async function add() {
-			await load(rand);   //wait for the image to load
-			//username, tag and online
-			ctx.font = 'bold 55pt Ubuntu';
-			ctx.textAlign = 'left';
-			ctx.fillStyle = colour;
-			ctx.fillText(`${json.data[0].username}`, 75, 125);
-			var textWidth = ctx.measureText(json.data[0].username).width;
-			ctx.font = '55pt Ubuntu';
-			if (json.data[0].meta.tag.value != null) {
-				if (json.data[0].meta.location.online) {
-				ctx.fillText(`[${json.data[0].meta.tag.value}]  [${json.data[0].meta.location.server}]`, textWidth + 100, 125)
-				}
-				else if (!json.data[0].meta.location.online) {
-				ctx.fillText(`[${json.data[0].meta.tag.value}]`, textWidth + 100, 125)
-				}
-			}
-			//guild and their rank
-			if (json.data[0].guild.name == null) {
-				var guild = "No guild"
-			}
-			else if (json.data[0].guild.name != null) {
-				var guild = `${json.data[0].guild.rank}  of  ${json.data[0].guild.name}`
-			}
-			ctx.font = '35pt Ubuntu';
-			ctx.fillText(`${guild}`, 75, 195);
-			
-			// informations
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Total level  :', 75, 300);
-			var textWidth = ctx.measureText("Total level  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`C ${json.data[0].global.totalLevel.combat.toLocaleString('en-US')} + P ${json.data[0].global.totalLevel.profession.toLocaleString('en-US')} = ${json.data[0].global.totalLevel.combined.toLocaleString('en-US')}`, 100 + textWidth, 300);
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Total playtime  :', 75, 375);
-			var textWidth = ctx.measureText("Total playtime  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${Math.round(Math.floor(json.data[0].meta.playtime)/60*4.7).toLocaleString('en-US')} hours`, 100 + textWidth, 375);
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Total mobs killed  :', 75, 450);
-			var textWidth = ctx.measureText("Total mobs killed  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${json.data[0].global.mobsKilled.toLocaleString('en-US')} mobs`, 100 + textWidth, 450);
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Total chests opened  :', 75, 525);
-			var textWidth = ctx.measureText("Total chests opened  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${json.data[0].global.chestsFound.toLocaleString('en-US')} chests`, 100 + textWidth, 525);
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Logins/Deaths  :', 75, 600);
-			var textWidth = ctx.measureText("Logins/Deaths  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${json.data[0].global.logins.toLocaleString('en-US')}/${json.data[0].global.deaths.toLocaleString('en-US')} times`, 100 + textWidth, 600);
-	
-			// last seen
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Last seen  :', 75, 675);
-			var textWidth = ctx.measureText("Last seen  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${output}`, 100 + textWidth, 675);
-	
-			var firstJoin = Date.now() - Date.parse(json.data[0].meta.firstJoin)
-			years = Math.floor(firstJoin / (365 * 24 * 60 * 60 * 1000));
-			days = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
-			hours = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-			minutes = Math.floor((firstJoin - years * (365 * 24 * 60 * 60 * 1000) - days * (24 * 60 * 60 * 1000) - hours * (60 * 60 * 1000)) / (60 * 1000));
-			output = `${years > 0 ? years + " yr " : ""}${days > 0 ? days + " d " : ""}${hours > 0 ? hours + " hr " : ""}${minutes > 0 ? minutes + " min " : ""}`;
-			output = output[output.length - 1] == ":" ? output.slice(0, -1) : output;
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Joined  :', 75, 750);
-			var textWidth = ctx.measureText("Joined  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${output}ago`, 100 + textWidth, 750);
-	
-			ctx.font = 'bold 45pt Ubuntu';
-			ctx.fillText('Highest leveled class  :', 75, 825);
-			var textWidth = ctx.measureText("Highest leveled class  :").width;
-			ctx.font = '45pt Ubuntu';
-			ctx.fillText(`${highest_class} [${json.data[0].classes[0].professions.combat.level}/${json.data[0].classes[0].level.toLocaleString('en-US')}]`, 100 + textWidth, 825);
-
-			ctx.font = '25pt Ubuntu';
-			ctx.textAlign = 'right'
-			ctx.fillStyle = "#fff";
-			ctx.globalAlpha = 0.1;
-			ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
-			ctx.globalAlpha = 1;
-		}
-			add();
-			setTimeout(save, 1);
-			send_img();
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-}
-else 	if(cmd == "tl"){
-		const playerls = new Discord.MessageEmbed()
-		var output = "";
-		playerls.setColor('#009eff')
-
-		man = 0;
-		if(!args[0]) return message.channel.send("Please provide a guild's tag (no name XD)")
-		let gprefix = args[0].toLowerCase()
-		let terrs = []
-		fetch('https://athena.wynntils.com/cache/get/territoryList')
-		.then(response => response.json())
-		.then(json => {
-			
-			for (var g in json.territories) {
-				let guprefix = json.territories[g].guildPrefix.toLowerCase()
-				if(guprefix === gprefix){
-					man++
-				terrs.push(`${man}. ${json.territories[g].territory}`);
-				}
-			}
-			if(terrs.length === 0) {
-				terrs.push(`${gprefix} has 0 territories.`);
-				}
-				for (var m in terrs) {
-					output = output.concat(`${terrs[m]}\n`)
-				}
-				playerls.setTitle(`Territory list for ${gprefix}`)
-				playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
-			   playerls.setFooter(`${gprefix} has ${man} territories`)
-			   message.channel.send(playerls)
-		})
-	}
-else if (cmd == "gs") {
-	if (args.length == 0) var guild = "Empire+of+Sindria";
-	else if (args.length != 0) var guild = message.content.replace(`${prefix}${cmd} `, '').replace(/ /g, "+");
-	fetch(`https://api.wynncraft.com/public_api.php?action=guildStats&command=${guild}`)
-	.then(res => res.json())
-	.then(function (json) {
-
-		var owner = json.members.find(m => m.rank == "OWNER")
-
-	async function send_img() {
-		message.channel.send({
-			files: [`./gstat.png`]
-		});
-	}
-
-	function save() {
-		const buffer = canvas.toBuffer('image/png');
-		fs.writeFileSync('./gstat.png', buffer);
-	}
-
-	async function load() {
-		loadImage(`./gs.png`)
-		.then((image) => {
-			ctx.drawImage(image, 0, 0, width, height);
-		});
-	}
-
-	async function add() {
-		await load();
-		//put all the canvas here
-		ctx.font = 'bold 55pt Ubuntu';
-		ctx.textAlign = 'left';
-		ctx.fillStyle = '#fff';
-		ctx.fillText(`${json.name}`, 75, 125);
-		var textWidth = ctx.measureText(json.name).width;
-		ctx.font = '55pt Ubuntu';
-		ctx.fillText(`[${json.prefix}]`, 125 + textWidth, 125);
-		ctx.font = '35pt Ubuntu';
-		ctx.fillText(`Owned by `, 75, 185);
-		var textWidth = ctx.measureText('Owned by ').width;
-		ctx.font = 'bold 35pt Ubuntu';
-		ctx.fillText(`${owner.name}`, 75 + textWidth, 185);
-
-		ctx.font = 'bold 45pt Ubuntu';
-		var textWidth = ctx.measureText("Level  :").width;
-		ctx.fillText('Level  :', 75, 300);
-		ctx.font = '45pt Ubuntu';
-		ctx.fillText(`${json.level}  |  ${json.xp*10}%`, 125 + textWidth, 300);
-
-		ctx.font = 'bold 45pt Ubuntu';
-		var textWidth = ctx.measureText("Created  :").width;
-		ctx.fillText('Created  :', 75, 375);
-		ctx.font = '45pt Ubuntu';
-		ctx.fillText(`${json.createdFriendly}`, 125 + textWidth, 375);
-
-		ctx.font = 'bold 45pt Ubuntu';
-		var textWidth = ctx.measureText("Total members  :").width;
-		ctx.fillText('Total members  :', 75, 450);
-		ctx.font = '45pt Ubuntu';
-		ctx.fillText(`${json.members.length}`, 125 + textWidth, 450);
-
-		ctx.font = 'bold 45pt Ubuntu';
-		var textWidth = ctx.measureText("Total territories  :").width;
-		ctx.fillText('Total territories  :', 75, 525);
-		ctx.font = '45pt Ubuntu';
-		ctx.fillText(`${json.territories}`, 125 + textWidth, 525);
-
-
-		//credits
-		ctx.font = '25pt Ubuntu';
-		ctx.textAlign = 'right'
-		ctx.fillStyle = "#fff";
-		ctx.globalAlpha = 0.25;
-		ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
-		ctx.globalAlpha = 1;
-	}
-	add();
-	setTimeout(save, 1);
-	send_img();
-})
-.catch(function (error) {
-	message.channel.send('An error has occured.');
-});
-}
-
-else if (cmd == "sp") {
-	var world_arr = [];
-	var sorted_worlds = [];
-	var offset = parseInt(args[0]) * 60000;
-	if (isNaN(offset)) offset = -120000;
-	fetch('https://athena.wynntils.com/cache/get/serverList')
-	.then(res => res.json())
-	.then(json => {
-
-		async function send_img() {
-			message.channel.send({
-				files: [`./sp.png`]
-			});
-		}
-		function save() {
-			const buffer = canvas.toBuffer('image/png');
-			fs.writeFileSync('./sp.png', buffer);
-		}
-		async function load() {
-			loadImage(`./sp.png`)
-			.then((image) => {
-				ctx.drawImage(image, 0, 0, width, height);
-			});
-		}
-
-		// sp regen every 1200000 ms
-
-		for (let world in json.servers) {
-			world_arr.push([world, Date.now() - json.servers[world].firstSeen]);
-		}
-		sorted_worlds = world_arr.sort((a, b) => {return a[1] -b[1]});
-
-		for (let fsorted in sorted_worlds) {
-			sorted_worlds[fsorted][1] = 20 - ((sorted_worlds[fsorted][1] - offset) % 1200000 / 1000 / 60);
-		}
-		sorted_worlds = sorted_worlds.sort((a, b) => {return a[1] -b[1]});
-		for (let fsorted in sorted_worlds) {
-			sorted_worlds[fsorted][1] = Math.ceil(sorted_worlds[fsorted][1]);
-			for (var world_name_length = sorted_worlds[fsorted][0].length; world_name_length < 4 ; world_name_length++) {
-				sorted_worlds[fsorted][0].concat(' ');
-			}
-		}
-		console.log(sorted_worlds);
-		async function add() {
-			await load();
-
-			ctx.font = 'bold 55pt Ubuntu';
-			ctx.textAlign = 'left';
-			ctx.fillStyle = '#fff';
-			ctx.fillText(`Soul Points`, 75, 125);
-			var textWidth = ctx.measureText('Soul Points  ').width;
-			if (!offset == 0) {
-				ctx.font = '55pt Ubuntu';
-				ctx.fillText(`[ ${offset/60000} minute(s) offset ]`, 75 + textWidth, 125);
-			}
-			ctx.font = '35pt Ubuntu';
-			ctx.fillText(`Time until next Soul Point regen. Stolen from Zinnig.`, 75, 185);
-
-			// 75 150 225 300 375 425 500 575 650 725 800
-				if (sorted_worlds.length < 8) {
-					console.log(8);
-					for (var spworld in sorted_worlds) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
-						if (spworld == 8) break;
-					}
-				}
-				else if (sorted_worlds.length > 8 && sorted_worlds < 17) {
-					console.log(19);
-					for (var spworld = 0; spworld < 9; spworld++) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
-					}
-					for (var spworld = 9; spworld < sorted_worlds.length; spworld++) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 31 + 485 + 85, 300 + ((spworld - 8) * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 31 + 210 + 85 + 485, 300 + ((spworld - 8) * 75));
-					}
-				}
-				else if (sorted_worlds.length >= 19) {
-					console.log('more than 19');
-					for (var spworld = 0; spworld < 8; spworld++) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 75, 300 + (spworld * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 210 + 85, 300 + (spworld * 75));
-					}
-					for (var spworld = 8; spworld < 16; spworld++) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 31 + 485 + 85, 300 + ((spworld - 8) * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 31 + 210 + 85 + 485, 300 + ((spworld - 8) * 75));
-						if (spworld == 16) break;
-					}
-					for (var spworld = 16; spworld < 24; spworld++) {
-						ctx.font = 'bold 45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][0]}  `, 62 + 970 + 85, 300 + ((spworld - 16) * 75));
-						var textWidth = ctx.measureText(`${sorted_worlds[spworld][0]}  `).width;
-						ctx.font = '45pt Ubuntu';
-						ctx.fillText(`${sorted_worlds[spworld][1]} min`, 62 + 210 + 85 + 970, 300 + ((spworld - 16) * 75));
-						if (spworld == 24) break;
-					}
-				}
-
-		//credits
-		ctx.font = '25pt Ubuntu';
-		ctx.textAlign = 'right'
-		ctx.fillStyle = "#fff";
-		ctx.globalAlpha = 0.1;
-		ctx.fillText(`Coded by nHexanol || Empire of Sindria`, width, 25);
-		ctx.globalAlpha = 1;
-		}
-
-	add();
-	setTimeout(save, 1);
-	send_img();
-		})
-	.catch(function (error) {
-		message.channel.send(`An error has occured.`);
-		console.log(error);
-	})
-}
-
 	else if (cmd == "terrls") {
 		territories_feed(message);
-	}
-
-	else if (cmd == "pt") {
-		function send_data(username, pt) {
-			const playtime_embed = new  Discord.MessageEmbed()
-			.setTitle(`Playtime (${days_back}d)`)
-			.setColor('#8e059e')
-			.addFields(
-				{name: "Name", value: `t${username}`, inline: true},
-				{name: "Playtime", value: `t${pt}`, inline: true},
-			)
-			console.log(`${username} ${pt}`);
-			message.channel.send(playtime_embed);
-		}
-		if (args.length < 1) {
-			days_back = 14;
-		}
-		else if (args[0] && args[0] != "-r") {
-			days_back = parseInt(args[0]);
-		}
-		var pt_data_now = fs.readFileSync(`./playtime/${Math.ceil(Date.now() / 86400000)}.txt`);
-		var pt_data = fs.readFileSync(`./playtime/${Math.ceil(Date.now() / 86400000) - days_back}.txt`);
-		var playtime_old = JSON.parse(pt_data);
-		var playtime_now = JSON.parse(pt_data_now);
-
-		var members_name = "";
-		var members_pt = "";
-		// [0] username, [1] playtime
-		for (var player in playtime_old) {
-				var hrs_old = Math.trunc(playtime_old[player][1]/60*4.7);
-				var mins_old = (hrs_old - playtime_old[player][1]/60*4.7).toFixed(2) * 60;
-
-				var hrs_now = Math.trunc(playtime_now[player][1]/60*4.7);
-				var mins_now = (hrs_now - playtime_now[player][1]/60*4.7).toFixed(2) * 60;
-
-				console.log(hrs_old + hrs_now);
-				
-				members_name += `${playtime_old[player][0].replace(/_/g, "\\_")}\n`;
-				console.log(members_name);
-				members_pt += `${hrs_now - hrs_old}h ${mins_now - mins_old}m\n`;
-		}
-		var embed_count = Math.floor(playtime_old.length) / 10;
-		var s = playtime_old.length % 10
-
-		var playtime_embed = new  Discord.MessageEmbed()
-		.setTitle(`Playtime (${days_back}d)`)
-		.setColor('#8e059e')
-		.addFields(
-			{name: "Name", value: `t${members_name}`, inline: true},
-			{name: "Playtime", value: `${members_pt}`, inline: true},
-		)
-		console.log(`${members_name} ${members_pt}`);
-		message.channel.send(playtime_embed);
 	}
 
 	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
-		if message.content.includes('client.token') {
+		if (message.content.includes('client.token')) {
 			message.channel.send("no");
 			return;
 		}
@@ -1721,7 +1085,7 @@ else if (cmd == "sp") {
 				.setTimestamp()
 			message.channel.send(err);
 		}
-	}			
+	}
 });
 
 function data_caching() {
@@ -1860,13 +1224,13 @@ function claim_ping() {
                     ctx2.strokeStyle = "#000";
                     ctx2.lineWidth = 0.005;
                     ctx2.textAlign = "center";
-                    
+
                     name_arr[t] = ESIClaims[t].split(' ');
                     name_arr[t].push(`[ ${gu_data.prefix} ]`);
                     for (var elem in name_arr) {
                         var lines = name_arr[elem].length;
                         switch (lines) {
-                            case 1: 
+                            case 1:
                             ctx2.fillText(`${name_arr[elem][0]}`, (cordX1[elem] + cordX2[elem]) / 2, ((cordY2[elem] + cordY1[elem]) / 2));
                             ctx2.strokeText(`${name_arr[elem][0]}`, (cordX1[elem] + cordX2[elem]) / 2, ((cordY2[elem] + cordY1[elem]) / 2));
                                 break;
@@ -2046,14 +1410,14 @@ function territories_feed(message) {
                     ctx2.strokeStyle = "#000";
                     ctx2.lineWidth = 0.005;
                     ctx2.textAlign = "center";
-                    
+
                     name_arr[t] = ESIClaims[t].split(' ');
                     name_arr[t].push(`[ ${gu_data.prefix} ]`);
                     console.log(name_arr);
                     for (var elem in name_arr) {
                         var lines = name_arr[elem].length;
                         switch (lines) {
-                            case 1: 
+                            case 1:
                             ctx2.fillText(`${name_arr[elem][0]}`, (cordX1[elem] + cordX2[elem]) / 2, ((cordY2[elem] + cordY1[elem]) / 2));
                             ctx2.strokeText(`${name_arr[elem][0]}`, (cordX1[elem] + cordX2[elem]) / 2, ((cordY2[elem] + cordY1[elem]) / 2));
                                 break;
@@ -2296,12 +1660,13 @@ var claim_ping_intervalID = setInterval(claim_ping, 120000);
 setInterval(data_caching, 900000);
 setInterval(get_guild_member_playtime, 86400000);
 
-//event listener 'message' 
+//event listener 'message'
 client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
 
-var token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'});
+// Gonna be insanely lazy here so I don't need to make a token.txt
+var token = process.env.BOT_TOKEN ?? fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'});
 client.login(token)
 .then(token = "")
 .catch(function (error) {
