@@ -170,7 +170,7 @@ client.on('ready', () => {
 })
 
 /* Command Handler Stuff */
-const commands = new commandHandler(".");
+const commands = new commandHandler(client, ".");
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 for (const file of commandFiles) {
 	const {names, func} = require(`./commands/${file}`);

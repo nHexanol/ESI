@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
     names: ["g"],
-    func: function guild(message, ...args) {
+    func: function guild(client, message, ...args) {
         async function sendData(gName, gPrefix, dUsername, dRank, dServer, online, maxMember, level) {
 			const guildEmbed = new Discord.MessageEmbed()
 			.setTitle(`${gName} (${gPrefix}) | ${level}`)

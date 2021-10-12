@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
     names: ["ls"],
-    func: function ls(message, world, ...args) {
+    func: function ls(client, message, world, ...args) {
         const playerls = new Discord.MessageEmbed()
 
 		playerls.setColor('#009eff')

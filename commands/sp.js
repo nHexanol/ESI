@@ -4,7 +4,7 @@ const { createCanvas, loadImage } = require('canvas');
 
 module.exports = {
     names: ["sp"],
-    func: function sp(message, offset, ...args) {
+    func: function sp(client, message, offset, ...args) {
         var world_arr = [];
         var sorted_worlds = [];
         var offset = parseInt(offset) * 60000;

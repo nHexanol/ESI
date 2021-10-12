@@ -2,7 +2,7 @@ const fs = require("fs");
 
 module.exports = {
     names: ["pt"],
-    func: function playtime(message, ...args) {
+    func: function playtime(client, message, ...args) {
         function send_data(username, pt) {
 			const playtime_embed = new  Discord.MessageEmbed()
 			.setTitle(`Playtime (${days_back}d)`)

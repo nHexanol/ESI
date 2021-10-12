@@ -4,7 +4,7 @@ const { createCanvas, loadImage } = require('canvas');
 
 module.exports = {
     names: ["p"],
-    func: function player(message, query, ...args) {
+    func: function player(client, message, query, ...args) {
         var rand = Math.round(Math.random());
         if (rand == 0) {
             var colour = '#fff';

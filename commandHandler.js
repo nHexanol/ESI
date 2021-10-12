@@ -1,5 +1,6 @@
 class commandHandler {
-    constructor(prefix, bot = false) {
+    constructor(client, prefix, bot = false) {
+        this.client = client;
         this.prefix = prefix;
         this.bot = bot;
 
@@ -28,9 +29,11 @@ class commandHandler {
         [cmd, ...args] = content.split(' ');
         cmd = this.commands.get(cmd.toLowerCase());
 
+        console.log(cmd.name);
+
         // Call the function, or notFound if not found
         try {
-            (cmd ?? this.notFound)(message, ...args);
+            (cmd ?? this.notFound)(this.client, message, ...args);
         } catch (e) {
             console.log(`Function ${cmd.name} errored:`);
             console.log(e);

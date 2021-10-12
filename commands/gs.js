@@ -4,7 +4,7 @@ const { createCanvas, loadImage } = require('canvas');
 
 module.exports = {
     names: ["gs"],
-    func: function gs(message, ...args) {
+    func: function gs(client, message, ...args) {
         if (args.length == 0) var guild = "Empire+of+Sindria";
 	    else if (args.length != 0) var guild = message.content.replace(`${prefix}${cmd} `, '').replace(/ /g, "+");
 

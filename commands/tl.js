@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
     names: ["tl"],
-    func: function terrList(message, tag, ...args) {
+    func: function terrList(client, message, tag, ...args) {
         const playerls = new Discord.MessageEmbed()
 		var output = "";
 		playerls.setColor('#009eff')

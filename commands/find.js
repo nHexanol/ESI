@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
     names: ["find"],
-    func: function find(message, username, ...args) {
+    func: function find(client, message, username, ...args) {
         if(!username) return message.channel.send("Please provide a minecraft username to find...");
 
         fetch(`https://api.wynncraft.com/v2/player/${username}/stats`)
