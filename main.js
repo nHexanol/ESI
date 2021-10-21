@@ -1666,7 +1666,7 @@ client.on('message', m => {
 });
 
 // Gonna be insanely lazy here so I don't need to make a token.txt
-var token = process.env.BOT_TOKEN ?? fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'});
+var token = process.env.BOT_TOKEN ?? fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
 client.login(token)
 .then(token = "")
 .catch(function (error) {

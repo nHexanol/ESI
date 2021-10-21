@@ -6,6 +6,10 @@ gs.png
 gstat.png
 buffer.png
 
+# PEM
+ssh.pem
+ssh.ppk
+
 # compiled output
 /dist
 /tmp
