@@ -30,7 +30,7 @@ module.exports = {
             }
 
             async function load() {
-                loadImage(`./sp.png`)
+                loadImage(`./asset/sp.png`)
                 .then((image) => {
                     ctx.drawImage(image, 0, 0, width, height);
                 });
