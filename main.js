@@ -29,7 +29,6 @@ const ctx2 = canvas2.getContext('2d');
 const {commandHandler} = require("./commandHandler");
 
 const python_guilds = spawn("python3.9", ["guilds.py"]);
-const python_playtime = spawn("python3.9", ["Playtime.py"]);
 // const java = spawn('java', ['-jar', 'sub.jar']);
 
 // const port = 8080;
@@ -118,12 +117,6 @@ python_guilds.stdout.on('data', (data) => {
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
  });
 
-python_playtime.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-	console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
- });
-
 // java.stdout.on('data', (data) => {
 // 	var output = uint8arrayToString(data);
 //     console.log(uint8arrayToString(data));
@@ -136,12 +129,6 @@ python_guilds.stderr.on('data', (data) => {
 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
 });
 
-python_playtime.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
-});
-
 // java.stderr.on('data', (data) => {
 // 	var output = uint8arrayToString(data);
 //     console.log(uint8arrayToString(data));
@@ -149,10 +136,6 @@ python_playtime.stderr.on('data', (data) => {
 // });
 
 python_guilds.on('exit', (code) => {
-    console.log("Process exited with code : " + code);
-});
-
-python_playtime.on('exit', (code) => {
     console.log("Process exited with code : " + code);
 });
 
