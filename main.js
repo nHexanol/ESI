@@ -1647,3 +1647,11 @@ setInterval(get_guild_member_playtime, 86400000);
 client.on('message', m => {
 	console.log(`[ ${m.author.username} ] >> ${m.content}`);
 });
+
+// Gonna be insanely lazy here so I don't need to make a token.txt
+var token = process.env.BOT_TOKEN ?? fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
+client.login(token)
+.then(token = "")
+.catch(function (error) {
+	console.log('Login failed :' + error);
+});
