@@ -29,8 +29,6 @@ class commandHandler {
         [cmd, ...args] = content.split(' ');
         cmd = this.commands.get(cmd.toLowerCase());
 
-        console.log(cmd.name);
-
         // Call the function, or notFound if not found
         try {
             (cmd ?? this.notFound)(this.client, message, ...args);
