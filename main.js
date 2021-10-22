@@ -28,7 +28,7 @@ const ctx2 = canvas2.getContext('2d');
 /* commandHandler */
 const {commandHandler} = require("./commandHandler");
 
-const python_guilds = spawn("python3.9", ["guilds.py"]);
+// const python_guilds = spawn("python3.9", ["guilds.py"]);
 // const java = spawn('java', ['-jar', 'sub.jar']);
 
 // const port = 8080;
@@ -111,11 +111,11 @@ var ESIClaims = [
 	'Iron Road'
   ]
 
-python_guilds.stdout.on('data', (data) => {
-	var output = uint8arrayToString(data);
-	console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
- });
+// python_guilds.stdout.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+// 	console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
+//  });
 
 // java.stdout.on('data', (data) => {
 // 	var output = uint8arrayToString(data);
@@ -123,11 +123,11 @@ python_guilds.stdout.on('data', (data) => {
 // 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
 // });
 
-python_guilds.stderr.on('data', (data) => {
-	var output = uint8arrayToString(data);
-    console.log(uint8arrayToString(data));
-	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
-});
+// python_guilds.stderr.on('data', (data) => {
+// 	var output = uint8arrayToString(data);
+//     console.log(uint8arrayToString(data));
+// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
+// });
 
 // java.stderr.on('data', (data) => {
 // 	var output = uint8arrayToString(data);
@@ -135,9 +135,9 @@ python_guilds.stderr.on('data', (data) => {
 // 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
 // });
 
-python_guilds.on('exit', (code) => {
-    console.log("Process exited with code : " + code);
-});
+// python_guilds.on('exit', (code) => {
+//     console.log("Process exited with code : " + code);
+// });
 
 // java.on('exit', (code) => {
 // 	console.log('Process exited with code : ' + code);
