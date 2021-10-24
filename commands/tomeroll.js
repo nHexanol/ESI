@@ -9,7 +9,7 @@ module.exports = {
 
         members = client.guilds.cache.get('554418045397762048').roles.cache.get('897320706973499452').members;
 
-        chosen = members.random(num).map(m => Util.escapeMarkdown(m.displayName));
+        chosen = members.random(num).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
 
         message.channel.send(chosen.join('\n'));
     }
