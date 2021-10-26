@@ -1655,3 +1655,7 @@ client.login(token)
 .catch(function (error) {
 	console.log('Login failed :' + error);
 });
+
+process.on('uncaughtException', (exc) => {
+	client.channels.cache.get('673360036650680321').send(`\`\`\`Uncaught Exception :\n${exc}\n\`\`\``);
+})
