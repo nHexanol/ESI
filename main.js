@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client()
+const repl = require('repl');
 const fs = require('fs');
 const os = require('os');
 const diffler = require('diffler');
@@ -142,7 +143,7 @@ var ESIClaims = [
 // java.on('exit', (code) => {
 // 	console.log('Process exited with code : ' + code);
 // });
-
+const session = repl.start();
 function addApplying(name) {
 	applying.push(name);
 }
