@@ -999,7 +999,7 @@ else if (cmd == "function" && (message.author.id == "246865469963763713" || mess
 		territories_feed(message);
 	}
 
-	else if (cmd == 'ev' && (message.author.id == 246865469963763713 || message.author.id == 723715951786328080 || message.author.id == 475440146221760512 || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
+	else if (cmd == 'ev' && (message.author.id == '246865469963763713' || message.author.id == '723715951786328080' || message.author.id == '475440146221760512' || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		var cmd = "";
 		if (message.content.includes('client.token')) {
@@ -1590,3 +1590,7 @@ client.login(token)
 .catch(function (error) {
 	console.log('Login failed :' + error);
 });
+
+process.on('uncaughtException', (exc) => {
+	client.channels.cache.get('673360036650680321').send(`\`\`\`Uncaught Exception :\n${exc}\n\`\`\``);
+})
