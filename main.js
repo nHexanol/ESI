@@ -1,38 +1,22 @@
-const Discord = require('discord.js');
-const client = new Discord.Client()
-const fs = require('fs');
-const os = require('os');
-const diffler = require('diffler');
-const request = require('request');
-const util = require('util');
-// const splArr = require('split-array');
-// const d = new Date()
-// const vega = require('vega');
-// const wynn = require('./wynncraft.js');
-const $ = {};
-$.ajax = require('najax');
-const http = require('http');
-const fetch = require('node-fetch');
-const disbut = require('discord.js-buttons')(client);
-const spawn = require("child_process").spawn;
-const { createCanvas, loadImage } = require('canvas');
-const width = 1600;
-const height = 900
-const canvas = createCanvas(width, height);
-const ctx = canvas.getContext('2d');
+const Discord = require("discord.js");
+const fs = require("fs");
+const diffler = require("diffler");
+const util = require("util");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+const {createCanvas, loadImage} = require("canvas");
+
+/* commandHandler */
+const {commandHandler} = require("./commandHandler");
+const {slashHandler} = require("./slashHandler");
+
+const client = new Discord.Client({intents: new Discord.Intents(0b111111000100111)});
+
 const terr_width = 1332;
 const terr_height = 759;
 const canvas2 = createCanvas(terr_width, terr_height);
 const ctx2 = canvas2.getContext('2d');
 
-/* commandHandler */
-const {commandHandler} = require("./commandHandler");
-
-// const python_guilds = spawn("python3.9", ["guilds.py"]);
-// const java = spawn('java', ['-jar', 'sub.jar']);
-
-// const port = 8080;
-// var cache = "";
 var prefix = ".";
 var eat_prefix = ">";
 var previousGuildMemberCount = 0;
@@ -49,9 +33,7 @@ var applying = [];
 var alreadyPinged = false;
 // var Role = '<@246865469963763713>';
 var claim_ping_role = "<@&722856382025564161>";
-const uint8arrayToString = function(data){
-    return String.fromCharCode.apply(null, data);
-};
+
 var resources = [ "🐟", "🐟", "🐟","⛏️","💲 💲 ⛏️", "⛏️" ,"🌳", "🌳", "⛏️", "⛏️", "⛏️", "⛏️", "🌳", "🌳", "🌾", "⛏️", "⛏️ 🌿 🐟 🌳" ,"⛏️" ,"🌳" ,"⛏️" ,"🌳" , "⛏️", "⛏️" ,"⛏️ ⛏️" ,"⛏️" ,"🌿" ,"⛏️" ];
 var allies = [
     "Avicia",
@@ -111,38 +93,6 @@ var ESIClaims = [
 	'Iron Road'
   ]
 
-// python_guilds.stdout.on('data', (data) => {
-// 	var output = uint8arrayToString(data);
-// 	console.log(uint8arrayToString(data));
-// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stdout :\n${output}\n\`\`\``);
-//  });
-
-// java.stdout.on('data', (data) => {
-// 	var output = uint8arrayToString(data);
-//     console.log(uint8arrayToString(data));
-// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stdout :\n${output}\n\`\`\``);
-// });
-
-// python_guilds.stderr.on('data', (data) => {
-// 	var output = uint8arrayToString(data);
-//     console.log(uint8arrayToString(data));
-// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nPython stderr :\n${output}\n\`\`\``);
-// });
-
-// java.stderr.on('data', (data) => {
-// 	var output = uint8arrayToString(data);
-//     console.log(uint8arrayToString(data));
-// 	if (pythonProcessDebug) client.channels.cache.get('784352935198064660').send(`\`\`\`\nJava stderr :\n${output}\n\`\`\``);
-// });
-
-// python_guilds.on('exit', (code) => {
-//     console.log("Process exited with code : " + code);
-// });
-
-// java.on('exit', (code) => {
-// 	console.log('Process exited with code : ' + code);
-// });
-
 function addApplying(name) {
 	applying.push(name);
 }
@@ -154,15 +104,29 @@ client.on('ready', () => {
 
 /* Command Handler Stuff */
 const commands = new commandHandler(client, ".");
-const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
-for (const file of commandFiles) {
-	const {names, func} = require(`./commands/${file}`);
-	commands.register(names, func);
-}
+const slashes = new slashHandler(client);
 
-console.log(`Registered Commands: ${[...commands.commands.keys()]}`);
+client.on("ready", async() => {
+	console.log(`Registering Commands...`);
 
-client.on("message", commands.process.bind(commands));
+	const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+	for (const file of commandFiles) {
+		const {names, func} = require(`./commands/${file}`);
+		commands.register(names, func);
+	}
+
+	const slashFiles = fs.readdirSync("./slashes").filter(file => file.endsWith(".js"));
+	for (const file of slashFiles) {
+		const {callback, ...slash} = require(`./slashes/${file}`);
+		await slashes.register(slash, callback);
+	}
+
+	console.log(`Registered Commands: ${[...commands.commands.keys()]}`);
+	console.log(`Registered Slashes: ${[...slashes.commands.keys()]}`);
+});
+client.on("messageCreate", commands.process.bind(commands));
+client.on("interactionCreate", slashes.process.bind(slashes));
+
 /* End Command Handler Stuff */
 
 client.on('guildMemberAdd', member => {
@@ -264,7 +228,7 @@ client.on('clickButton', async (button) => {
 	}
 });
 
-client.on('message', mesg => {
+client.on('messageCreate', mesg => {
 	if (mesg.channel.id == "622668875485675532" && mesg.author.id == "418413540857085972") {
 		client.channels.cache.get('622668875485675532').send({
 			files: ['./buffer.png']
@@ -273,7 +237,7 @@ client.on('message', mesg => {
 	}
 });
 
-client.on('message', message => {
+client.on('messageCreate', message => {
 	if (!message.content.startsWith(eat_prefix) || message.author.bot) return;
 	var args = message.content.slice(eat_prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
@@ -347,7 +311,7 @@ client.on('message', message => {
 	}
 });
 
-client.on('message', message => {
+client.on('messageCreate', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 	var args = message.content.slice(prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
@@ -1100,34 +1064,6 @@ function guildMemberUpdateListener() {
 		}
 	})
 }
-//server list
-function playtime_logger() {
-	var online_player_pt = "";
-	var guild_member_arr = [];
-	fetch('https://api.wynncraft.com/public_api.php?action=onlinePlayers')
-	.then(res => res.json())
-	.then(json => {
-		online_player_pt = JSON.stringify(json);
-	})
-	.catch((error) => {
-		client.channels.cache.get('784352935198064660').send(`\`\`\`js\n${error}\n\`\`\``);
-	});
-// guild stats
-	fetch("https://api.wynncraft.com/public_api.php?action=guildStats&command=Empire+of+Sindria")
-	.then(res => res.json())
-	.then(data => {
-		//var playtime = [];
-		//var playtime[i] = JSON.parse(fs.readFileSync(`./playtime/${(Date.now() / 86400000)}`, {encoding:'utf8', flag:'r'}))
-		for(var i in data.members) {
-			if (online_player_pt.includes(data.members[i].username)) {
-			//	playtime[i].push([`${data.members[i]}`, ``])
-			}
-		}
-	})
-	.catch((error) => {
-		client.channels.cache.get('784352935198064660').send(`\`\`\`js\n${error}\n\`\`\``);
-	});
-}
 
 var lost_count_old = 0;
 function claim_ping() {
@@ -1645,11 +1581,10 @@ setInterval(get_guild_member_playtime, 86400000);
 
 //event listener 'message'
 client.on('message', m => {
-	console.log(`[ ${m.author.username} ] >> ${m.content}`);
+	console.log(`[ ${m.member.displayName} ] >> ${m.content}`);
 });
 
-// Gonna be insanely lazy here so I don't need to make a token.txt
-var token = process.env.BOT_TOKEN ?? fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
+var token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
 client.login(token)
 .then(token = "")
 .catch(function (error) {
