@@ -11,7 +11,7 @@ module.exports = {
     callback: async function log(_client, interaction, options) {
         // member.user.id compatible for both GuildMember and APIGuildMember
         const memberID = interaction.member.user.id;
-        if (!option.channel.permissionsFor(memberID).has("MANAGE_MESSAGES") ||
+        if (!options.channel.permissionsFor(memberID).has("MANAGE_MESSAGES") ||
             !interaction.channel.permissionsFor(memberID).has("MANAGE_MESSAGES")) {
             interaction.reply({content: "You do not have permission to use this command.", ephemeral: true});
             return;
