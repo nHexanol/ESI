@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const fetch = require("node-fetch");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = {
     names: ["ls"],
@@ -30,7 +30,7 @@ module.exports = {
             playerls.setTitle(`Player list for ${input}`)
             playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
             playerls.setFooter(`${playerCounter} players online`)
-            message.channel.send(playerls)
+            message.channel.send({embeds: [playerls]})
         });
     }
 }

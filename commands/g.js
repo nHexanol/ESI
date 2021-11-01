@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const request = require("request");
-const fetch = require("node-fetch");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = {
     names: ["g"],
@@ -16,7 +16,7 @@ module.exports = {
 			)
 			.setFooter(`${online} / ${maxMember} online`)
 
-			message.channel.send(guildEmbed);
+			message.channel.send({embeds: [guildEmbed]});
 		}
 
 		var arr_counter = 0;
@@ -37,7 +37,10 @@ module.exports = {
 			guName = gu.name;
 			guPrefix = gu.prefix;
 
-			if (guName == null) return message.channel.send("Guild not found!");
+			if (guName == null || guPrefix == null) {
+				return message.channel.send(`Guild ${filtered} not found!`);
+			}
+
 			var counter = [];
 			var onlineList = 0;
             var final_sorttemplate = ["\\*\\*\\*\\*\\*", "\\*\\*\\*\\*", "\\*\\*\\*", "\\*\\*", "\\*", "", "UNKWN"];

@@ -38,7 +38,7 @@ class commandHandler {
         }
     }
 
-    notFound(message, ...args) {
+    notFound(...args) {
         return;
     }
 }

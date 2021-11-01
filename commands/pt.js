@@ -54,6 +54,6 @@ module.exports = {
 			{name: "Playtime", value: `${members_pt}`, inline: true},
 		)
 		console.log(`${members_name} ${members_pt}`);
-		message.channel.send(playtime_embed);
+		message.channel.send({embeds: [playtime_embed]});
     }
 }

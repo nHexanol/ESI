@@ -8,6 +8,9 @@
 ssh.pem
 ssh.ppk
 
+# TOKEN
+token.txt
+
 # compiled output
 /dist
 /tmp
