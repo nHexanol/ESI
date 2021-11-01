@@ -352,6 +352,11 @@ client.on('messageCreate', message => {
 					var username = data.data[0].username;
 					var guild = JSON.stringify(data.data[0].guild.name).replace('"', '').replace('"', '');
 
+					if (message.guild == null) {
+						message.channel.send("Please use this command in ESI discord.");
+						return;
+					}
+
 					if (guild != 'null' && !args[1]) {
 						// already in guild
 						message.channel.send(`You're currently in another guild! In order to apply, please do .apply ${args[0]} -f in order to apply as an in-game member, or do .apply ${args[0]} -e to apply as a Duocitizen.`);
