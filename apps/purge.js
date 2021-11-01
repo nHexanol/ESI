@@ -28,6 +28,6 @@ module.exports = {
         toPurge.set(message.id, message);
         await channel.bulkDelete(toPurge);
 
-        interaction.reply({content: `${toPurge.size} messages deleted!`});
+        interaction.reply({content: `${toPurge.size} messages deleted!`, ephemeral: true});
     }
 }
