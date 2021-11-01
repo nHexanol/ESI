@@ -16,7 +16,7 @@ module.exports = {
 			)
 			.setFooter(`${online} / ${maxMember} online`)
 
-			message.channel.send(guildEmbed);
+			message.channel.send({embeds: [guildEmbed]});
 		}
 
 		var arr_counter = 0;

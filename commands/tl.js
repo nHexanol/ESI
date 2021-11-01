@@ -30,8 +30,8 @@ module.exports = {
 				}
 				playerls.setTitle(`Territory list for ${gprefix}`)
 				playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
-			   playerls.setFooter(`${gprefix} has ${man} territories`)
-			   message.channel.send(playerls)
+				playerls.setFooter(`${gprefix} has ${man} territories`)
+				message.channel.send({embeds: [playerls]})
 		});
     }
 }

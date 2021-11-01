@@ -30,7 +30,7 @@ module.exports = {
             playerls.setTitle(`Player list for ${input}`)
             playerls.setDescription(`\`\`\`\n${output}\n\`\`\``)
             playerls.setFooter(`${playerCounter} players online`)
-            message.channel.send(playerls)
+            message.channel.send({embeds: [playerls]})
         });
     }
 }

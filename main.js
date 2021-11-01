@@ -2,13 +2,14 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const diffler = require("diffler");
 const util = require("util");
+const request = require("request");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const {createCanvas, loadImage} = require("canvas");
 
 /* commandHandler */
 const {commandHandler} = require("./commandHandler");
-const {slashHandler} = require("./slashHandler");
+const {interactionHandler} = require("./interactionHandler");
 
 const client = new Discord.Client({intents: new Discord.Intents(0b111111000100111)});
 
@@ -104,7 +105,7 @@ client.on('ready', () => {
 
 /* Command Handler Stuff */
 const commands = new commandHandler(client, ".");
-const slashes = new slashHandler(client);
+const slashes = new interactionHandler(client);
 
 client.on("ready", async() => {
 	console.log(`Registering Commands...`);
@@ -115,15 +116,15 @@ client.on("ready", async() => {
 		commands.register(names, func);
 	}
 
-	const slashFiles = fs.readdirSync("./slashes").filter(file => file.endsWith(".js"));
-	for (const file of slashFiles) {
-		const {callback, ...slash} = require(`./slashes/${file}`);
-		await slashes.register(slash, callback);
-	}
+	await client.application.commands.set([]);
+	await slashes.registerCommands('./slashes');
+	await slashes.registerApps('./apps');
 
 	console.log(`Registered Commands: ${[...commands.commands.keys()]}`);
 	console.log(`Registered Slashes: ${[...slashes.commands.keys()]}`);
+	console.log(`Registered CTXs: ${[...slashes.apps.keys()]}`);
 });
+
 client.on("messageCreate", commands.process.bind(commands));
 client.on("interactionCreate", slashes.process.bind(slashes));
 
@@ -307,7 +308,7 @@ client.on('messageCreate', message => {
 			.setTitle(`${nickname} ate ${ate}`)
 			.setImage(file)
 
-		message.channel.send(eat_embed);
+		message.channel.send({embeds: [eat_embed]});
 	}
 });
 
@@ -375,10 +376,10 @@ client.on('messageCreate', message => {
                             ],
 							topic: `${message.author.id} ${args[0]}`
 						}).then(function (result) {
-                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let category = message.guild.channels.cache.get('673360035098918932');
                             let stch = message.guild.channels.cache.get(result.id);
-                            stch.setParent(category);
-							stch.overwritePermissions([
+							stch.setParent(category);
+							stch.permissionOverwrites.set([
                                 {
                                     id: message.guild.id,
                                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
@@ -488,10 +489,10 @@ client.on('messageCreate', message => {
 								],
                                 topic: `${message.author.id} ${args[0]}`,
                             }).then(function (result) {
-                                let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                                let category = message.guild.channels.cache.get('673360035098918932');
                                 let stch = message.guild.channels.cache.get(result.id);
                                 stch.setParent(category);
-								stch.overwritePermissions([
+								stch.permissionOverwrites.set([
 									{
 										id: message.guild.id,
 										deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
@@ -600,10 +601,10 @@ client.on('messageCreate', message => {
                             ],
 							topic: `${message.author.id} ${args[0]}`,
                         }).then(function (result) {
-                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let category = message.guild.channels.cache.get('673360035098918932');
                             let stch = message.guild.channels.cache.get(result.id);
                             stch.setParent(category);
-							stch.overwritePermissions([
+							stch.permissionOverwrites.set([
                                 {
                                     id: message.guild.id,
                                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
@@ -707,10 +708,10 @@ client.on('messageCreate', message => {
                             ],
 							topic: `${message.author.id} ${args[0]}`,
 						}).then(function (result) {
-                            let category = message.guild.channels.cache.find(c => c.name == "Bot Channel" && c.type == "category");
+                            let category = message.guild.channels.cache.get('673360035098918932');
                             let stch = message.guild.channels.cache.get(result.id);
                             stch.setParent(category);
-							stch.overwritePermissions([
+							stch.permissionOverwrites.set([
                                 {
                                     id: message.guild.id,
                                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"],
@@ -800,11 +801,6 @@ client.on('messageCreate', message => {
 				}
 			});
 		}
-	}
-
-	else if (cmd == "debug" && message.author.id == "246865469963763713") {
-		pythonProcessDebug = !pythonProcessDebug;
-		message.channel.send(pythonProcessDebug);
 	}
 
 	else if (cmd == "requestGuild") {
@@ -999,8 +995,10 @@ else if (cmd == "function" && (message.author.id == "246865469963763713" || mess
 		territories_feed(message);
 	}
 
-	else if (cmd == 'ev' && (message.author.id == '246865469963763713' || message.author.id == '723715951786328080' || message.author.id == '475440146221760512' || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
+	else if (cmd == 'eva' && (message.author.id == '246865469963763713' || message.author.id == '723715951786328080' || message.author.id == '475440146221760512' || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
+		// message.channel.send("FOR DEBUGGING PURPOSE DON'T USE IF NOT NECESSARY!");
+		// return;
 		var cmd = "";
 		if (message.content.includes('client.token')) {
 			message.channel.send("no");
@@ -1011,26 +1009,25 @@ else if (cmd == "function" && (message.author.id == "246865469963763713" || mess
 		}
 		try {
 			var out = eval(cmd);
-			if (out.includes(client.token)) {
-				out.replace(client.token, "Token");
-			}
-			var out = util.inspect(out);
+
+			out = util.inspect(out);
 			const Evaluate = new Discord.MessageEmbed()
 				.setColor('#ffaa33')
 				.setTitle('Evaluate')
 				.setDescription(`\`\`\`js\n>${cmd}\n< ${out}\n\`\`\``)
 				.setFooter(message.author.username)
 				.setTimestamp()
-			message.channel.send(Evaluate);
+			message.channel.send({embeds: [Evaluate]});
 		}
 		catch (e) {
+			console.log(e);
 			const err = new Discord.MessageEmbed()
 				.setColor('#ffaa33')
 				.setTitle('Evaluate')
 				.setDescription(`\`\`\`js\n>${cmd}\n< ${out}\n\`\`\``)
 				.setFooter(message.author.username)
 				.setTimestamp()
-			message.channel.send(err);
+			message.channel.send({embeds: [err]});
 		}
 	}
 });
@@ -1564,13 +1561,13 @@ function resetPingCounter() {
 function ping(terrData, count) {
 	if (!terrClaimPingEnabled) return;
 	else {
-	const Ping = new Discord.MessageEmbed()
-		.setTitle('Territory manager - Detected missing claims (Temporary)')
-		.setColor('#ff7777')
-		.setDescription(terrData)
-		.setFooter(`Total lost claims : ${count}`)
-	message.channel.send(Ping);
-	client.channels.cache.get('784352935198064660').send(Ping);
+		const Ping = new Discord.MessageEmbed()
+			.setTitle('Territory manager - Detected missing claims (Temporary)')
+			.setColor('#ff7777')
+			.setDescription(terrData)
+			.setFooter(`Total lost claims : ${count}`)
+		message.channel.send({embeds: [Ping]});
+		client.channels.cache.get('784352935198064660').send({embeds: [Ping]});
 	}
 }
 
@@ -1580,8 +1577,8 @@ setInterval(data_caching, 900000);
 setInterval(get_guild_member_playtime, 86400000);
 
 //event listener 'message'
-client.on('message', m => {
-	console.log(`[ ${m.member.displayName} ] >> ${m.content}`);
+client.on('messageCreate', m => {
+	console.log(`[ ${m.member?.displayName ?? m.author.username} ] >> ${m.content}`);
 });
 
 var token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
@@ -1590,7 +1587,3 @@ client.login(token)
 .catch(function (error) {
 	console.log('Login failed :' + error);
 });
-
-process.on('uncaughtException', (exc) => {
-	client.channels.cache.get('673360036650680321').send(`\`\`\`Uncaught Exception :\n${exc}\n\`\`\``);
-})
