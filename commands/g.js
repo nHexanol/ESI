@@ -36,6 +36,8 @@ module.exports = {
 			var gu = JSON.parse(body);
 			guName = gu.name;
 			guPrefix = gu.prefix;
+
+			if (guName == null) return message.channel.send("Guild not found!");
 			var counter = [];
 			var onlineList = 0;
             var final_sorttemplate = ["\\*\\*\\*\\*\\*", "\\*\\*\\*\\*", "\\*\\*\\*", "\\*\\*", "\\*", "", "UNKWN"];
