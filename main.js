@@ -995,7 +995,7 @@ else if (cmd == "function" && (message.author.id == "246865469963763713" || mess
 		territories_feed(message);
 	}
 
-	else if (cmd == 'eva' && (message.author.id == '246865469963763713' || message.author.id == '723715951786328080' || message.author.id == '475440146221760512' || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
+	else if (cmd == 'ev' && (message.author.id == '246865469963763713' || message.author.id == '723715951786328080' || message.author.id == '475440146221760512' || message.author.id == 330509305663193091 || message.author.id == 722992562989695086 || message.author.id == 282964164358438922)) {
 		//eval, for debugging purpose don't use if not nessessary
 		// message.channel.send("FOR DEBUGGING PURPOSE DON'T USE IF NOT NECESSARY!");
 		// return;
