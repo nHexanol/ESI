@@ -69,7 +69,7 @@ public class Main extends ListenerAdapter implements EventListener
     }
     
     public static File addPeople(final String username, final Image icon) throws IOException, FontFormatException {
-        final File f = new File("./bg.png");
+        final File f = new File("~/ESI/bg.png");
         final Image img = ImageIO.read(f);
         final BufferedImage img2 = toBufferedImage(img);
         final Image icons = icon.getScaledInstance(400, 400, 0);
@@ -79,7 +79,7 @@ public class Main extends ListenerAdapter implements EventListener
         final Graphics g = combined.getGraphics();
         g.drawImage(img2, -185, -87, null);
         g.drawImage(img3, 70, 169, null);
-        final Font customFont = Font.createFont(0, new File("./fonts/Roboto-Light.ttf")).deriveFont(13.0f);
+        final Font customFont = Font.createFont(0, new File("~/ESI/fonts/Roboto-Light.ttf")).deriveFont(13.0f);
         final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(customFont);
         g.setFont(customFont);
