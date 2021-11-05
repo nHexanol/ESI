@@ -4,6 +4,8 @@ const diffler = require("diffler");
 const util = require("util");
 const request = require("request");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const repl = require('repl');
+const session = repl.start();
 
 const {createCanvas, loadImage} = require("canvas");
 
@@ -1591,4 +1593,8 @@ client.login(token)
 .then(token = "")
 .catch(function (error) {
 	console.log('Login failed :' + error);
+});
+process.on('uncaughtException', (reason) => {
+	console.log(reason);
+	client.channels.cache.get('673360036650680321').send(`\`\`\`js\n${reason}\n\`\`\``);
 });
