@@ -9,7 +9,7 @@ module.exports = {
         number: createOption('INTEGER', 'Numnber of tomes to roll')
     },
     callback: async function tomeroll(client, interaction, options) {
-        if (options.num <= 0) {
+        if (options.number <= 0) {
             interaction.reply({content: "`number` must be greater than 0!", ephemeral: true});
             return;
         }
@@ -27,9 +27,9 @@ module.exports = {
         const eligible = citizens.intersect(reactionUsers);
 
         console.log(eligible);
-        console.log(eligible.random(options.num));
+        console.log(eligible.random(options.number));
 
-        chosen = eligible.random(options.num).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
+        chosen = eligible.random(options.number).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
 
         interaction.reply(chosen.join('\n'));
     }
