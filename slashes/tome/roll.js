@@ -12,7 +12,9 @@ module.exports = {
         if (options.num <= 0) {
             interaction.reply({content: "`number` must be greater than 0!", ephemeral: true});
             return;
-        } 
+        }
+
+        await interaction.deferReply();
 
         const guild = await interaction.client.guilds.fetch('554418045397762048');
         const guildMembers = await guild.members.fetch();
@@ -23,6 +25,9 @@ module.exports = {
         const reactionUsers = await tomeMessage?.reactions.resolve('📚').users.fetch();
 
         const eligible = citizens.intersect(reactionUsers);
+        console.log(citizens);
+        console.log(reactionUsers);
+        console.log(eligible);
 
         chosen = eligible.random(options.num).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
 
