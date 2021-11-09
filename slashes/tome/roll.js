@@ -25,9 +25,9 @@ module.exports = {
         const reactionUsers = await tomeMessage?.reactions.resolve('📚').users.fetch();
 
         const eligible = citizens.intersect(reactionUsers);
-        console.log(citizens);
-        console.log(reactionUsers);
+
         console.log(eligible);
+        console.log(eligible.random(options.num));
 
         chosen = eligible.random(options.num).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
 
