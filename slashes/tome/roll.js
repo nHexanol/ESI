@@ -24,12 +24,11 @@ module.exports = {
         const tomeMessage = await infoChannel?.messages.fetch('906986707591786557');
         const reactionUsers = await tomeMessage?.reactions.resolve('📚').users.fetch();
 
-        const eligible = citizens.intersect(reactionUsers);
+        const eligible = reactionUsers.intersect(citizens);
 
-        console.log(eligible);
         console.log(eligible.random(options.number));
 
-        chosen = eligible.random(options.number).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName));
+        chosen = eligible.random(options.number).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName ?? m.username));
 
         interaction.reply(chosen.join('\n'));
     }
