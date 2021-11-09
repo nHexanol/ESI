@@ -26,10 +26,8 @@ module.exports = {
 
         const eligible = reactionUsers.intersect(citizens);
 
-        console.log(eligible.random(options.number));
-
         chosen = eligible.random(options.number).filter(Boolean).map(m => Util.escapeMarkdown(m.displayName ?? m.username));
 
-        interaction.reply(chosen.join('\n'));
+        interaction.editReply(chosen.join('\n'));
     }
 }
