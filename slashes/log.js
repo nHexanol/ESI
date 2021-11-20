@@ -8,7 +8,7 @@ module.exports = {
         channel: createOption('CHANNEL', 'channel to log'),
         filename: createOption('STRING', 'name of the file', false)
     },
-    callback: async function log(_client, interaction, options) {
+    callback: async function log(interaction, options) {
         // member.user.id compatible for both GuildMember and APIGuildMember
         const memberID = interaction.member.user.id;
         if (!options.channel.permissionsFor(memberID).has("MANAGE_MESSAGES") ||

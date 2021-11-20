@@ -8,8 +8,9 @@
 ssh.pem
 ssh.ppk
 
-# TOKEN
+# TOKEN/DB URI
 token.txt
+dburi.txt
 
 # compiled output
 /dist
