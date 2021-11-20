@@ -1,5 +1,4 @@
 const { Util } = require("discord.js");
-const { Collection } = require("@discordjs/collection");
 const { createOption } = require("../../interactionHandler");
 
 module.exports = {
