@@ -7,7 +7,7 @@ module.exports = {
     options: {
         number: createOption('INTEGER', 'Numnber of tomes to roll')
     },
-    callback: async function tomeroll(client, interaction, options) {
+    callback: async function tomeroll(interaction, options) {
         if (options.number <= 0) {
             interaction.reply({content: "`number` must be greater than 0!", ephemeral: true});
             return;
