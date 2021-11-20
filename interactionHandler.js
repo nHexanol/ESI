@@ -95,7 +95,7 @@ class interactionHandler {
             if (dirent.isDirectory()) {
                 slash.options.push(await this.readSubcommandGroup(entPath, [...slashName, dirent.name]));
             } else if (dirent.isFile() && dirent.name.endsWith('.js')) {
-                slash.options.push(await this.handleSubcommand(entPath, slashName));
+                slash.options.push(await this.handleSubcommand(entPath, [...slashName]));
             }
         }
 
@@ -116,7 +116,7 @@ class interactionHandler {
             if (dirent.isDirectory()) {
                 option.options.push(await this.readSubcommandGroup(entPath, [...slashName, dirent.name]));
             } else if (dirent.isFile() && dirent.name.endsWith('.js')) {
-                option.options.push(await this.handleSubcommand(entPath, slashName));
+                option.options.push(await this.handleSubcommand(entPath, [...slashName]));
             }
         }
 
@@ -194,7 +194,7 @@ class interactionHandler {
 
         // Call the function, or notFound if not found
         try {
-            cmd.callback(this.client, commandInteraction, options);
+            cmd.callback(commandInteraction, options);
         } catch (e) {
             console.log(`Function ${cmd.name} errored:`);
             console.log(e);

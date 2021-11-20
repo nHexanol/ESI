@@ -8,6 +8,7 @@ const repl = require('repl');
 const session = repl.start();
 
 const {createCanvas, loadImage} = require("canvas");
+const { Client: DBClient } = require("pg");
 
 /* commandHandler */
 const {commandHandler} = require("./commandHandler");
@@ -110,6 +111,14 @@ const commands = new commandHandler(client, ".");
 const slashes = new interactionHandler(client);
 
 client.on("ready", async() => {
+	console.log(`Connecting to ESI-DB...`);
+
+	const connectionString = fs.readFileSync('./dburi.txt', {encoding:'utf8', flag:'r'});
+	client.db = new DBClient({connectionString});
+	await client.db.connect();
+
+	await client.db.query("SELECT CONCAT('Connected to ESI-DB at ', NOW()) AS \"success\"").then(r => console.log(r.rows[0].success));
+
 	console.log(`Registering Commands...`);
 
 	const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
@@ -1594,7 +1603,15 @@ client.login(token)
 .catch(function (error) {
 	console.log('Login failed :' + error);
 });
+
 process.on('uncaughtException', (reason) => {
 	console.log(reason);
 	client.channels.cache.get('673360036650680321').send(`\`\`\`js\n${reason}\n\`\`\``);
 });
+
+process.on('exit', async () => {
+	console.log("Exiting...");
+	await client.db.end();
+});
+
+process.on("SIGINT", process.exit);
