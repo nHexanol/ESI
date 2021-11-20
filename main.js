@@ -35,6 +35,7 @@ var thresholdTerr = 3;
 var applying = [];
 var alreadyPinged = false;
 // var Role = '<@246865469963763713>';
+var enabledClaimPing = false;
 var claim_ping_role = "<@&722856382025564161>";
 
 var resources = [ "🐟", "🐟", "🐟","⛏️","💲 💲 ⛏️", "⛏️" ,"🌳", "🌳", "⛏️", "⛏️", "⛏️", "⛏️", "🌳", "🌳", "🌾", "⛏️", "⛏️ 🌿 🐟 🌳" ,"⛏️" ,"🌳" ,"⛏️" ,"🌳" , "⛏️", "⛏️" ,"⛏️ ⛏️" ,"⛏️" ,"🌿" ,"⛏️" ];
@@ -1071,6 +1072,7 @@ function guildMemberUpdateListener() {
 
 var lost_count_old = 0;
 function claim_ping() {
+	if (!enabledClaimPing) return;
 	var lost_count = 0;
 	fetch('https://api.wynncraft.com/public_api.php?action=territoryList')
     .then(res => res.json())
@@ -1081,16 +1083,19 @@ function claim_ping() {
         }
 
 		function send_terr() {
-			alreadyPinged = true;
-			setTimeout(resetPingCounter, 32400000);
-			client.channels.cache.get('606713555911311370').send(`${claim_ping_role}` , {
-				files: ['./buffer.png']
-			})
-			.catch(function (error) {
-				client.channels.cache.get('An error has occured.');
-				client.channels.cache.get('784352935198064660').send(`\`\`\`js\n${error}\n\`\`\``);
-				console.log(error);
-			})
+			if (!enabledClaimPing) return;
+			else if (enabledClaimPing) {
+				alreadyPinged = true;
+				setTimeout(resetPingCounter, 32400000);
+				client.channels.cache.get('606713555911311370').send(`${claim_ping_role}` , {
+					files: ['./buffer.png']
+				})
+				.catch(function (error) {
+					client.channels.cache.get('An error has occured.');
+					client.channels.cache.get('784352935198064660').send(`\`\`\`js\n${error}\n\`\`\``);
+					console.log(error);
+				});
+			}
 		}
 
         async function load_base() {
@@ -1409,7 +1414,7 @@ function territories_feed(message) {
         async function process() {
             await add();
             save();
-			send_terr();
+	    if (enabledClaimPing) send_terr();
         }
         process();
     })
