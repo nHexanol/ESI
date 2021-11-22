@@ -5,7 +5,7 @@ module.exports = {
     name: 'roll',
     description: 'Rolls for Tomes',
     options: {
-        number: createOption('INTEGER', 'Numnber of tomes to roll')
+        number: createOption('INTEGER', 'Number of tomes to roll')
     },
     callback: async function tomeroll(interaction, options) {
         if (options.number <= 0) {
