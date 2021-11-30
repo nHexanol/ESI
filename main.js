@@ -1081,7 +1081,6 @@ function guildMemberUpdateListener() {
 
 var lost_count_old = 0;
 function claim_ping() {
-	if (!enabledClaimPing) return;
 	var lost_count = 0;
 	fetch('https://api.wynncraft.com/public_api.php?action=territoryList')
     .then(res => res.json())
@@ -1261,7 +1260,7 @@ function claim_ping() {
 				files: ['./buffer.png']
 			})
 			lost_count_old = lost_count;
-			if (lost_count > 2 && alreadyPinged == false && strat == 0) {
+			if (lost_count > 2 && alreadyPinged == false && strat == 0 && enabledClaimPing) {
 			send_terr();
 			}
         }
