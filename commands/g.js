@@ -83,7 +83,7 @@ module.exports = {
                         storage[arr_counter].rank = fRank;
                         storage[arr_counter].server = json.data[0].meta.location.server;
                         arr_counter++;
-                        sUsername = sUsername.concat(`${json.data[0].username}\n`);
+                        sUsername = sUsername.concat(`${json.data[0].username.replace(/_/g, "\\_")}\n`);
                         sRank = sRank.concat(`${fRank}\n`);
                         sServer = sServer.concat(`${json.data[0].meta.location.server}\n`);
                         console.log(`Counter length : ${counter.length}\nOnline : ${onlineList}`);
