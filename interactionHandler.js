@@ -62,7 +62,7 @@ class interactionHandler {
     }
 
     async registerCommand(fileName) {
-        const {callback, ...slash} = require(REL_PREFIX + fileName);
+        const {callback, guildIds, ...slash} = require(REL_PREFIX + fileName);
 
         const allOptions = Object.entries(slash.options ?? {})
                          .map(([n, os]) => {return {name: n, ...os}});
@@ -77,7 +77,13 @@ class interactionHandler {
             return rest;
         });
 
-        await this.client.application.commands.create(slash);
+        if (guildIds == null) {
+            await this.client.application.commands.create(slash);
+        } else {
+            for (const guildId of guildIds) {
+                await this.client.application.commands.create(slash, guildId);
+            }
+        }
 
         this.commands.set(slash.name, {slashOptions, callback});
     }
@@ -168,12 +174,16 @@ class interactionHandler {
         let commandNames = [commandInteraction.commandName],
             optionData = commandInteraction.options.data;
 
+        console.log(commandInteraction);
+
         while (optionData[0]?.options != null) {
             commandNames.push(optionData[0].name);
             optionData = optionData[0].options;
         }
 
-        if (optionData[0].type == 'SUB_COMMAND') {
+        console.log(optionData);
+
+        if (optionData[0]?.type == 'SUB_COMMAND') {
             commandNames.push(optionData[0].name);
         }
 
@@ -186,6 +196,7 @@ class interactionHandler {
         let options = {};
         if (cmd.slashOptions != null) {
             for (const option of cmd.slashOptions) {
+                // lookupOption returns the getter for the corresponding type of option, and we call it
                 options[option.name] = commandInteraction.options[lookupOption(option.type)](option.name);
 
                 if (options[option.name] == null) options[option.name] = option.defaultValue;
