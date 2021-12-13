@@ -1,19 +1,18 @@
-// 
-// Decompiled by Procyon v0.5.36
-// 
 
 package net.Phoenix.welcomer;
 
 
-import me.bed0.jWynn.WynncraftAPI;
-import me.bed0.jWynn.api.v1.territory.WynncraftTerritory;
-import me.bed0.jWynn.api.v2.player.meta.WynncraftPlayerMetaLocation;
+
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import java.io.InputStreamReader;
 import java.net.URLConnection;
 
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.utils.AttachmentOption;
 import java.net.URL;
+import java.nio.channels.Channel;
 import java.util.*;
 
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -26,6 +25,7 @@ import java.awt.Graphics;
 import java.awt.image.RenderedImage;
 import java.awt.GraphicsEnvironment;
 import java.awt.Font;
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.awt.Graphics2D;
@@ -47,6 +47,7 @@ public class Main extends ListenerAdapter implements EventListener
 {
     public static JDABuilder builder = JDABuilder.createDefault(token.getToken());
     public static JDA jda;
+    private static HashMap<Long, String> people = new HashMap<>();
 
     
     public static void main(final String[] args) throws LoginException, InterruptedException {
@@ -176,10 +177,46 @@ public class Main extends ListenerAdapter implements EventListener
     
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
-        final String[] str = event.getMessage().getContentRaw().split(" ");
-        if (str[0].equals(".onlinecheck")) {
-            event.getChannel().sendMessage("Yep, online").complete();
+        ArrayList str = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+        if (str.get(0).equals(".onlinecheck")) {
+            event.getChannel().sendMessage("Yep, java is online").complete();
+        }
+        if(event.getMessage().getContentRaw().equalsIgnoreCase("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!")){
+            if(event.getAuthor().isBot()){
+                if(event.getAuthor().getId().equals("781588726438035476")){
+                    TextChannel ch = event.getGuild().getTextChannelById(683093425452744778L);
+                    String name = event.getChannel().getName().split("-")[1];
+                    ch.sendMessage("Please react if you have invited " + name).queue((message) -> {
+                        message.pin().queue();
+                        message.addReaction(event.getGuild().getEmoteById(820858331811020833L)).queue();
+                        people.put(message.getIdLong(), name);
+                    });
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onMessageReactionAdd(MessageReactionAddEvent event){
+        if(people.containsKey(event.getMessageIdLong())){
+            if(!event.getMember().getUser().isBot()){
+                if(event.getReaction().getReactionEmote().getEmote().equals(event.getGuild().getEmoteById(820858331811020833L))){
+                    Message msg = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+                    msg.unpin().complete();
+                    msg.clearReactions().complete();
+                    msg.addReaction(event.getGuild().getEmoteById(820858264249958413L)).complete();
+                    msg.editMessage(event.getMember().getNickname() + " has invited " + people.get(event.getMessageIdLong())+ ". React again if it was by mistake").complete();
+
+                }
+                if(event.getReaction().getReactionEmote().getEmote().equals(event.getGuild().getEmoteById(820858264249958413L))){
+                    Message msg = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+                    msg.pin().complete();
+                    msg.editMessage("Please invite " + people.get(event.getMessageIdLong())).complete();
+                }
+            }
         }
     }
+
 
 }
