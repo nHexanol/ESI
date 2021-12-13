@@ -3,8 +3,28 @@ const path = require("path");
 
 const REL_PREFIX = '.' + path.sep;
 
-function createOption(optionType, description, required = true, defaultValue = null) {
-    return {type: optionType, description: description, required: required, defaultValue: defaultValue};
+function createOption(type, description, required = true, defaultValue = null, choices = null) {
+    return {type, description, required, defaultValue, choices};
+}
+
+function createChoice(name, value) {
+    return {name, value};
+}
+
+function userAllow(id) {
+    return {id, type: "USER", permission: true};
+}
+
+function userDeny(id) {
+    return {id, type: "USER", permission: false};
+}
+
+function roleAllow(id) {
+    return {id, type: "ROLE", permission: true};
+}
+
+function roleDeny(id) {
+    return {id, type: "ROLE", permission: false};
 }
 
 function lookupOption(option) {
@@ -62,7 +82,7 @@ class interactionHandler {
     }
 
     async registerCommand(fileName) {
-        const {callback, guildIds, ...slash} = require(REL_PREFIX + fileName);
+        const {callback, guildIds, permissions, ...slash} = require(REL_PREFIX + fileName);
 
         const allOptions = Object.entries(slash.options ?? {})
                          .map(([n, os]) => {return {name: n, ...os}});
@@ -78,10 +98,16 @@ class interactionHandler {
         });
 
         if (guildIds == null) {
-            await this.client.application.commands.create(slash);
+            const command = await this.client.application.commands.create(slash);
+            if (permissions != null) {
+                await command.permissions.set({ permissions });
+            }
         } else {
             for (const guildId of guildIds) {
-                await this.client.application.commands.create(slash, guildId);
+                const command = await this.client.application.commands.create(slash, guildId);
+                if (permissions != null) {
+                    await command.permissions.set({ permissions });
+                }
             }
         }
 
@@ -214,4 +240,11 @@ class interactionHandler {
 }
 
 exports.createOption = createOption;
+exports.createChoice = createChoice;
+
+exports.userAllow = userAllow;
+exports.userDeny = userDeny;
+exports.roleAllow = roleAllow;
+exports.roleDeny = roleDeny;
+
 exports.interactionHandler = interactionHandler;
