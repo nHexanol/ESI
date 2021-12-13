@@ -27,7 +27,7 @@ module.exports = {
                           .join('\n\n');
 
         await writeFile(filename, messageString);
-        await interaction.channel.send({files: [filename]});
+        await interaction.channel.send({ content, files: [filename] });
         await unlink(filename);
         await interaction.reply({content: "Done!", ephemeral: true});
     }
