@@ -168,81 +168,74 @@ client.on('clickButton', async (button) => {
 	}
   });
 
-client.on('clickButton', async (button) => {
-	if (button.id == "GuP") {
-		if (button.clicker.member.roles.cache.has('800547586694971443') == true) {
-			button.clicker.member.roles.remove('800547586694971443');
-			client.users.cache.get(button.clicker.user.id).send('Removed Guild Parties role.');
-			button.defer();
+client.on('interactionCreate', async (interaction) => {
+	if (!interaction.isButton()) {
+		return;
+	}
+
+	const clicker = await interaction.guild.members.fetch(interaction.user.id);
+
+	if (interaction.customId == "GuP") {
+		if (clicker.roles.cache.has('800547586694971443')) {
+			clicker.roles.remove('800547586694971443');
+			await interaction.reply({ content: 'Removed Guild Parties role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('800547586694971443') == false) {
-			button.clicker.member.roles.add('800547586694971443');
-			client.users.cache.get(button.clicker.user.id).send('Added Guild Parties role.');
-			button.defer();
+		else if (clicker.roles.cache.has('800547586694971443') == false) {
+			clicker.roles.add('800547586694971443');
+			await interaction.reply({ content: 'Added Guild Parties role.', ephemeral: true });
 		}
 	}
-	else if (button.id == "CH") {
-		if (button.clicker.member.roles.cache.has('800547442772148234') == true) {
-			button.clicker.member.roles.remove('800547442772148234');
-			client.users.cache.get(button.clicker.user.id).send('Removed Challenges role.');
-			button.defer();
+	else if (interaction.customId == "CH") {
+		if (clicker.roles.cache.has('800547442772148234') == true) {
+			await clicker.roles.remove('800547442772148234');
+			await interaction.reply({ content: 'Removed Challenges role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('800547442772148234') == false) {
-			button.clicker.member.roles.add('800547442772148234');
-			client.users.cache.get(button.clicker.user.id).send('Added Challenges role.');
-			button.defer();
+		else if (clicker.roles.cache.has('800547442772148234') == false) {
+			await clicker.roles.add('800547442772148234');
+			await interaction.reply({ content: 'Added Challenges role.', ephemeral: true });
 		}
 	}
-	else if (button.id == "VT") {
-		if (button.clicker.member.roles.cache.has('554896955638153216')) {
-			button.defer();
-			return client.users.cache.get(button.clicker.user.id).send('You are not eligible for this role.');
+	else if (interaction.customId == "VT") {
+		if (clicker.roles.cache.has('554896955638153216')) {
+			return await interaction.reply({ content: 'You are not eligible for this role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('786035931647180810') == true) {
-			button.clicker.member.roles.remove('786035931647180810');
-			client.users.cache.get(button.clicker.user.id).send('Removed Venting role.');
-			button.defer();
+		else if (clicker.roles.cache.has('786035931647180810') == true) {
+			await clicker.roles.remove('786035931647180810');
+			await interaction.reply({ content: 'Removed Venting role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('786035931647180810') == false) {
-			button.clicker.member.roles.add('786035931647180810');
-			client.users.cache.get(button.clicker.user.id).send('Added Venting role.');
-			button.defer();
+		else if (clicker.roles.cache.has('786035931647180810') == false) {
+			await clicker.roles.add('786035931647180810');
+			await interaction.reply({ content: 'Added Venting role.', ephemeral: true });
 		}
 	}
-	else if (button.id == "RP") {
-		if (button.clicker.member.roles.cache.has('591763786474455130') == true) {
-			button.clicker.member.roles.remove('591763786474455130');
-			client.users.cache.get(button.clicker.user.id).send('Removed Roleplay role.');
-			button.defer();
+	else if (interaction.customId == "RP") {
+		if (clicker.roles.cache.has('591763786474455130') == true) {
+			await clicker.roles.remove('591763786474455130');
+			await interaction.reply({ content: 'Removed Roleplay role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('591763786474455130') == false) {
-			button.clicker.member.roles.add('591763786474455130');
-			client.users.cache.get(button.clicker.user.id).send('Added Roleplay role.');
-			button.defer();
+		else if (clicker.roles.cache.has('591763786474455130') == false) {
+			await clicker.roles.add('591763786474455130');
+			await interaction.reply({ content: 'Added Roleplay role.', ephemeral: true });
 		}
 	}
-	else if (button.id == "AN") {
-		if (button.clicker.member.roles.cache.has('854233448494530571') == true) {
-			button.clicker.member.roles.remove('854233448494530571');
-			client.users.cache.get(button.clicker.user.id).send('Removed Anime role.');
-			button.defer();
+	else if (interaction.customId == "AN") {
+		if (clicker.roles.cache.has('854233448494530571') == true) {
+			await clicker.roles.remove('854233448494530571');
+			await interaction.reply({ content: 'Removed Anime role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('854233448494530571') == false) {
-			button.clicker.member.roles.add('854233448494530571');
-			client.users.cache.get(button.clicker.user.id).send('Added Anime role.');
-			button.defer();
+		else if (clicker.roles.cache.has('854233448494530571') == false) {
+			await clicker.roles.add('854233448494530571');
+			await interaction.reply({ content: 'Added Anime role.', ephemeral: true });
 		}
 	}
-	else if (button.id == "PD") {
-		if (button.clicker.member.roles.cache.has('728104157852205056') == true) {
-			button.clicker.member.roles.remove('728104157852205056');
-			client.users.cache.get(button.clicker.user.id).send('Removed Politics and Debate role.');
-			button.defer();
+	else if (interaction.customId == "PD") {
+		if (clicker.roles.cache.has('728104157852205056') == true) {
+			await clicker.roles.remove('728104157852205056');
+			await interaction.reply({ content: 'Removed Politics and Debate role.', ephemeral: true });
 		}
-		else if (button.clicker.member.roles.cache.has('728104157852205056') == false) {
-			button.clicker.member.roles.add('728104157852205056');
-			client.users.cache.get(button.clicker.user.id).send('Added Politics and Debate role.');
-			button.defer();
+		else if (clicker.roles.cache.has('728104157852205056') == false) {
+			await clicker.roles.add('728104157852205056');
+			await interaction.reply({ content: 'Added Politics and Debate role.', ephemeral: true });
 		}
 	}
 });
