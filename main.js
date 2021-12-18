@@ -11,8 +11,11 @@ const {createCanvas, loadImage} = require("canvas");
 const { Client: DBClient } = require("pg");
 
 /* commandHandler */
-const {commandHandler} = require("./commandHandler");
-const {interactionHandler} = require("./interactionHandler");
+const { commandHandler } = require("./commandHandler");
+const { interactionHandler } = require("./interactionHandler");
+
+/* ping listener */
+const { onPing } = require("./listeners/ping");
 
 const client = new Discord.Client({intents: new Discord.Intents(0b111111000100111)});
 
@@ -142,6 +145,9 @@ client.on("interactionCreate", slashes.process.bind(slashes));
 
 /* End Command Handler Stuff */
 
+/* Ping Listener */
+client.on("messageCreate", onPing);
+
 client.on('guildMemberAdd', member => {
 //    client.channels.cache.get('554418045397762050').send(`Welcome ${member} to the Empire of Sindria Discord server! If you're looking to apply to ESI, please use \`.apply <ign>\` here or in <#554894605217169418>; if you're just visiting, have fun!`);
 });
@@ -254,8 +260,6 @@ client.on('messageCreate', message => {
 	if (!message.content.startsWith(eat_prefix) || message.author.bot) return;
 	var args = message.content.slice(eat_prefix.length).trim().split(" ");
 	var cmd = args.shift().toLowerCase();
-
-
 
 	if (cmd == "eat" || cmd == "vore") {
 		var rand = Math.ceil(Math.random() * 5);
