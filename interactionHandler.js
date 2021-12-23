@@ -74,9 +74,15 @@ class interactionHandler {
     }
 
     async registerApp(fileName) {
-        const {callback, ...app} = require(REL_PREFIX + fileName);
+        const {callback, guildIds, ...app} = require(REL_PREFIX + fileName);
 
-        await this.client.application.commands.create(app);
+        if (guildIds == null) {
+            await this.client.application.commands.create(app);
+        } else {
+            for (const guildId of guildIds) {
+                await this.client.application.commands.create(app, guildId);
+            }
+        }
 
         this.apps.set(app.name, callback);
     }

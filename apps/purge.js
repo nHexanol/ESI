@@ -1,6 +1,7 @@
 module.exports = {
     name: 'Purge Until',
     type: 'MESSAGE',
+    guildIds: ['554418045397762048'],
     callback: async function purge(interaction) {
         const message = interaction.options.getMessage('message');
         console.log(message);
