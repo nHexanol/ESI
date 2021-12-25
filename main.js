@@ -185,14 +185,14 @@ client.on('interactionCreate', async (interaction) => {
 			await interaction.reply({ content: 'Added Guild Parties role.', ephemeral: true });
 		}
 	}
-	else if (interaction.customId == "CH") {
-		if (clicker.roles.cache.has('800547442772148234') == true) {
-			await clicker.roles.remove('800547442772148234');
-			await interaction.reply({ content: 'Removed Challenges role.', ephemeral: true });
+	else if (interaction.customId == "MG") {
+		if (clicker.roles.cache.has('741508919851089981') == true) {
+			await clicker.roles.remove('741508919851089981');
+			await interaction.reply({ content: 'Removed Minigames role.', ephemeral: true });
 		}
-		else if (clicker.roles.cache.has('800547442772148234') == false) {
-			await clicker.roles.add('800547442772148234');
-			await interaction.reply({ content: 'Added Challenges role.', ephemeral: true });
+		else if (clicker.roles.cache.has('741508919851089981') == false) {
+			await clicker.roles.add('741508919851089981');
+			await interaction.reply({ content: 'Added Minigames role.', ephemeral: true });
 		}
 	}
 	else if (interaction.customId == "VT") {
@@ -236,6 +236,26 @@ client.on('interactionCreate', async (interaction) => {
 		else if (clicker.roles.cache.has('728104157852205056') == false) {
 			await clicker.roles.add('728104157852205056');
 			await interaction.reply({ content: 'Added Politics and Debate role.', ephemeral: true });
+		}
+	}
+	else if (interaction.customId == "SV") {
+		if (clicker.roles.cache.has('722856382025564161') == true) {
+			await clicker.roles.remove('722856382025564161');
+			await interaction.reply({ content: 'Removed Sindrian Vanguard role.', ephemeral: true });
+		}
+		else if (clicker.roles.cache.has('722856382025564161') == false) {
+			await clicker.roles.add('722856382025564161');
+			await interaction.reply({ content: 'Added Sindrian Vanguard role.', ephemeral: true });
+		}
+	}
+	else if (interaction.customId == "SC") {
+		if (clicker.roles.cache.has('891933320856895498') == true) {
+			await clicker.roles.remove('891933320856895498');
+			await interaction.reply({ content: 'Removed Sindrian Crusader role.', ephemeral: true });
+		}
+		else if (clicker.roles.cache.has('891933320856895498') == false) {
+			await clicker.roles.add('891933320856895498');
+			await interaction.reply({ content: 'Added Sindrian Crusader role.', ephemeral: true });
 		}
 	}
 });
