@@ -186,12 +186,12 @@ client.on('interactionCreate', async (interaction) => {
 		}
 	}
 	else if (interaction.customId == "MG") {
-		if (clicker.roles.cache.has('741508919851089981') == true) {
-			await clicker.roles.remove('741508919851089981');
+		if (clicker.roles.cache.has('800547442772148234') == true) {
+			await clicker.roles.remove('800547442772148234');
 			await interaction.reply({ content: 'Removed Minigames role.', ephemeral: true });
 		}
-		else if (clicker.roles.cache.has('741508919851089981') == false) {
-			await clicker.roles.add('741508919851089981');
+		else if (clicker.roles.cache.has('800547442772148234') == false) {
+			await clicker.roles.add('800547442772148234');
 			await interaction.reply({ content: 'Added Minigames role.', ephemeral: true });
 		}
 	}
