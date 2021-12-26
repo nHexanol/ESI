@@ -131,7 +131,12 @@ client.on("ready", async() => {
 		commands.register(names, func);
 	}
 
+	// Clear cached commands
 	await client.application.commands.set([]);
+	for (const guildId of client.guilds.cache.keys()) {
+		await client.application.commands.set([], guildId);
+	}
+
 	await slashes.registerCommands('./slashes');
 	await slashes.registerApps('./apps');
 
