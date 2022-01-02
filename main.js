@@ -134,7 +134,11 @@ client.on("ready", async() => {
 	// Clear cached commands
 	await client.application.commands.set([]);
 	for (const guildId of client.guilds.cache.keys()) {
-		await client.application.commands.set([], guildId);
+		try {
+			await client.application.commands.set([], guildId);
+		} catch (e) {
+			console.log(`Failed to sync guild ${client.guilds.cache.get(guildId).name}.`);
+		}
 	}
 
 	await slashes.registerCommands('./slashes');
