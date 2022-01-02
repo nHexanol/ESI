@@ -1,37 +1,32 @@
 
+
 package net.Phoenix.welcomer;
 
 
 
+import me.bed0.jWynn.WynncraftAPI;
+import me.bed0.jWynn.api.v1.guild.GuildList;
+import me.bed0.jWynn.api.v1.guild.WynncraftGuild;
+import me.bed0.jWynn.api.v1.territory.WynncraftTerritory;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.io.InputStreamReader;
+import java.awt.*;
 import java.net.URLConnection;
 
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.utils.AttachmentOption;
 import java.net.URL;
-import java.nio.channels.Channel;
 import java.util.*;
 
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import java.awt.Composite;
-import java.awt.AlphaComposite;
-import java.awt.RenderingHints;
-import java.awt.FontFormatException;
+
 import java.io.IOException;
-import java.awt.Graphics;
-import java.awt.image.RenderedImage;
-import java.awt.GraphicsEnvironment;
-import java.awt.Font;
-import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.awt.Graphics2D;
-import java.awt.image.ImageObserver;
 import java.awt.image.BufferedImage;
-import java.awt.Image;
+import java.util.List;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.OnlineStatus;
@@ -48,8 +43,11 @@ public class Main extends ListenerAdapter implements EventListener
     public static JDABuilder builder = JDABuilder.createDefault(token.getToken());
     public static JDA jda;
     private static HashMap<Long, String> people = new HashMap<>();
+    private static HashMap<WynncraftGuild, Color> guildcolor = new HashMap<>();
+    private static WynncraftAPI api = new WynncraftAPI();
+    private static List<WynncraftTerritory> gterrs = Arrays.asList(api.v1().territoryList().run());
 
-    
+
     public static void main(final String[] args) throws LoginException, InterruptedException {
         Main.builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
         Main.builder.addEventListeners(new Main());
@@ -91,7 +89,7 @@ public class Main extends ListenerAdapter implements EventListener
         final String hl2 = "Welcome to the Empire of Sindria";
         final String hl3 = "discord server. If you want to ";
         final String hl4 = "apply, do ";
-        final String hl4p2 = ".apply [IGN] in here";
+        final String hl4p2 = "/apply [IGN] in here";
         final String hl4p3 = "or in #bot-commands.";
         final String hl5 = "If you're just visiting, have fun!";
         g.setFont(bold);
@@ -100,11 +98,11 @@ public class Main extends ListenerAdapter implements EventListener
         g.setFont(customFont);
         g.setFont(g.getFont().deriveFont(45.0f));
         g.drawString(hl2, 560, 280);
-        g.drawString(hl3, 560, 345);
-        g.drawString(hl4, 560, 420);
+        g.drawString(hl3, 560, 390);
+        g.drawString(hl4, 560, 500);
         g.setFont(bold);
-        g.drawString(hl4p2, 747, 420);
-        g.drawString(hl4p3, 560, 505);
+        g.drawString(hl4p2, 752, 500);
+        g.drawString(hl4p3, 560, 610);
         g.setFont(customFont.deriveFont(45.0f));
         g.drawString(hl5, 560, 570);
         g.dispose();
@@ -112,6 +110,45 @@ public class Main extends ListenerAdapter implements EventListener
         ImageIO.write(combined, "PNG", xy);
         return xy;
     }
+
+    /*@Override
+    public void onReady(ReadyEvent e){
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                gterrs = Arrays.asList(api.v1().territoryList().run());
+                for(String g : api.v1().guildList().run().getList()){
+                    WynncraftGuild guild = api.v1().guildStats(g).run();
+                    if(guild.getName().equals("Empire Of Sindria")){
+                        Color c = new Color(121, 247, 99, 0.75F);
+                        guildcolor.put(guild, c);
+                    }
+                }
+            }
+        }, 0, 30000);
+
+    }*/
+
+    /*public static File addGavel() throws IOException {
+        File f = new File("~/ESI/bg.png");
+        Image img = ImageIO.read(f);
+        BufferedImage gavel = toBufferedImage(img);
+        Graphics g = gavel.getGraphics();
+        for(WynncraftTerritory t: gterrs){
+            Color c = guildcolor.get(api.v1().guildStats(t.getGuild()).run());
+            Rectangle rect= new Rectangle();
+            Point point1 = null;
+            Point point2 = null;
+            point1 = new Point(t.getLocation().getEndX(), t.getLocation().getEndY());
+            rect.setFrameFromDiagonal(point1, point2);
+            g.setColor(c);
+            g.fillRect(rect.x, rect.y, rect.width, rect.height);
+        }
+        final File xy = new File("./gavel.png");
+        ImageIO.write(gavel, "PNG", xy);
+        return xy;
+    }*/
     
     public static Image toCircle(final Image logo) throws IOException {
         final BufferedImage image = new BufferedImage(400, 400, 2);
@@ -177,11 +214,11 @@ public class Main extends ListenerAdapter implements EventListener
     
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
-        ArrayList str = new ArrayList(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+        ArrayList<String> str = new ArrayList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
         if (str.get(0).equals(".onlinecheck")) {
             event.getChannel().sendMessage("Yep, java is online").complete();
         }
-        if(event.getMessage().getContentRaw().equalsIgnoreCase("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!")){
+        /*if(event.getMessage().getContentRaw().equalsIgnoreCase("We are glad to inform you your application was accepted. After doing /gu join ESI the next time you're online, be sure to ask a fellow guild member for an invite to our discord, where we can provide you with more information there!")){
             if(event.getAuthor().isBot()){
                 if(event.getAuthor().getId().equals("781588726438035476")){
                     TextChannel ch = event.getGuild().getTextChannelById(683093425452744778L);
@@ -193,11 +230,11 @@ public class Main extends ListenerAdapter implements EventListener
                     });
                 }
             }
-        }
+        }*/
 
     }
 
-    @Override
+    /*@Override
     public void onMessageReactionAdd(MessageReactionAddEvent event){
         if(people.containsKey(event.getMessageIdLong())){
             if(!event.getMember().getUser().isBot()){
@@ -216,7 +253,7 @@ public class Main extends ListenerAdapter implements EventListener
                 }
             }
         }
-    }
+    }*/
 
 
 }
