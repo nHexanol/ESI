@@ -267,6 +267,20 @@ client.on('interactionCreate', async (interaction) => {
 			await interaction.reply({ content: 'Added Sindrian Crusader role.', ephemeral: true });
 		}
 	}
+	else if (interaction.customId == "EV") {
+		if (clicker.roles.cache.has('928041302434676766') == true) {
+			await clicker.roles.remove('928041302434676766');
+			await interaction.reply({ content: 'Removed Events role.', ephemeral: true });
+		}
+		else if (clicker.roles.cache.has('928041302434676766') == false) {
+			if (clicker.roles.cache.hasAny(['554889169705500672', '554896955638153216'])) {
+				await clicker.roles.add('928041302434676766');
+				await interaction.reply({ content: 'Added Events role.', ephemeral: true });
+			} else {
+				await interaction.reply({ content: 'Only citizens and envoys may receive this role. You can apply to be an envoy with /apply.', ephemeral: true });
+			}
+		}
+	}
 });
 
 client.on('messageCreate', mesg => {
