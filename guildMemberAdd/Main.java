@@ -1,4 +1,6 @@
-
+// 
+// Decompiled by Procyon v0.5.36
+// 
 
 package net.Phoenix.welcomer;
 
@@ -82,7 +84,7 @@ public class Main extends ListenerAdapter implements EventListener
         final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(customFont);
         g.setFont(customFont);
-        final String usernamefirst16 = abbreviate(username, 24, "...");
+        final String usernamefirst16 = StringUtils.abbreviate(username, 24);
         g.setFont(g.getFont().deriveFont(50.0f));
         final String hl1 = usernamefirst16;
         final Font bold = customFont.deriveFont(45.0f).deriveFont(1);
@@ -163,19 +165,7 @@ public class Main extends ListenerAdapter implements EventListener
         return ImageIO.read(xy);
     }
     
-    public static String abbreviate(final String s, final int maxLength, String appendToEnd) {
-        String result = s;
-        String finalr = result;
-        appendToEnd = ((appendToEnd == null) ? "" : appendToEnd);
-        if (maxLength >= appendToEnd.length()) {
-            if (s.length() > maxLength) {
-                result = StringUtils.abbreviate(s, maxLength-3);
-                finalr = result+"...";
-            }
-            return finalr;
-        }
-        throw new StringIndexOutOfBoundsException("maxLength can not be smaller than appendToEnd parameter length.");
-    }
+
 
 
     
