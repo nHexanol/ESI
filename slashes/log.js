@@ -26,8 +26,8 @@ module.exports = {
                           .map(m => `[${m.member?.displayName ?? m.author?.tag}]\n${m.content}`)
                           .join('\n\n');
 
-        await writeFile(filename, messageString);
-        await interaction.channel.send({ files: [filename] });
+        await writeFile(`./application-logs/${filename}`, messageString);
+        await interaction.channel.send({ files: [ `./application-logs/${filename}` ] });
         await unlink(filename);
         await interaction.reply({content: "Done!", ephemeral: true});
     }
