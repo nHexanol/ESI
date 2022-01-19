@@ -44,27 +44,15 @@ var claim_ping_role = "<@&722856382025564161>";
 
 var resources = [ "🐟", "🐟", "🐟","⛏️","💲 💲 ⛏️", "⛏️" ,"🌳", "🌳", "⛏️", "⛏️", "⛏️", "⛏️", "🌳", "🌳", "🌾", "⛏️", "⛏️ 🌿 🐟 🌳" ,"⛏️" ,"🌳" ,"⛏️" ,"🌳" , "⛏️", "⛏️" ,"⛏️ ⛏️" ,"⛏️" ,"🌿" ,"⛏️" ];
 var allies = [
-    "Avicia",
-    "Emorians",
-    "Guardian of Wynn",
-    "HackForums",
-    "IceBlue Team",
-    "The Simple Ones",
-    "Mystic Woods",
-    "Astrum Pantheon",
-    "Gopniks",
-    "Lux Nova",
-    "The Mage Legacy",
-    "Paladins United",
-    "Titans Valor",
-    "The Aquarium",
-    "The FishTank",
-    "TheNoLifes",
-    "ShadowFall",
-    "The Dark Phoenix",
-    "Jeus",
-    "Nefarious Ravens"
-];
+  'TheNoLifes',       'Eden',
+  'Emorians',         'Avicia',
+  'Nefarious Ravens', 'IceBlue Team',
+  'Blacklisted',      'Kingdom Foxes',
+  'KongoBoys',        'Sins of Seedia',
+  'TruthSworD',       'The Mage Legacy',
+  'Jasmine Dragon',   'Forever Twilight',
+  'Titans Valor'
+]
 
 var cordX1 = [72, 118, 180, 264, 435, 726, 820, 290, 74, 469, 596, 726, 793, 1218, 1189, 186, 74, 469, 596, 726, 785, 185, 290, 185, 186, 642, 557];
 var cordX2 = [117, 179, 263, 356, 577, 619, 1051, 186, 185, 347, 481, 619, 973, 1065, 1066, 290, 185, 347, 482, 614, 973, 74, 186, 74, 289, 716, 637];
