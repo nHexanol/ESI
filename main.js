@@ -1129,7 +1129,7 @@ function ping(terrData, count) {
 }
 
 //setInterval(guildMemberUpdateListener, 60000);
-var claim_ping_intervalID = setInterval(claim_ping, 120000);
+// var claim_ping_intervalID = setInterval(claim_ping, 120000);
 setInterval(data_caching, 900000);
 setInterval(get_guild_member_playtime, 86400000);
 
@@ -1140,7 +1140,9 @@ client.on('messageCreate', m => {
 
 var token = fs.readFileSync('./token.txt', {encoding:'utf8', flag:'r'}).replace("\n", "");
 client.login(token)
-.then(token = "")
+.then(function () {
+	token = ""
+})
 .catch(function (error) {
 	console.log('Login failed :' + error);
 });
